@@ -1,0 +1,19 @@
+*{color: #fff;}
+
+.bg::before {    
+      content: "";
+      background-image: url('../bg.jpg');
+      background-size: cover;
+      position: absolute;
+      top: 0px;
+      right: 0px;
+      bottom: 0px;
+      left: 0px;
+      opacity: 0.60;
+}
+
+.form-container{border: 0px solid #fff; padding: 50px 50px; margin-top: 10vh;
+    -webkit-box-shadow: -1px 4px 26px 11px rgba(0,0,0,0.75);
+    -moz-box-shadow: -1px 4px 26px 11px rgba(0,0,0,0.75);
+    box-shadow: -1px 4px 26px 11px rgba(0,0,0,0.75);
+}
