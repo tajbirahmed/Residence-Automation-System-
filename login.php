@@ -17,9 +17,14 @@ session_start();
     $row = mysqli_fetch_assoc($result);
     if ($row) {
       if ($row['username'] == $email && $row['password'] == $pass && $type == $row['type']) {
-        $_SESSION["type"] = $row['type']; 
-        header("Location : index.php");
-        // die;
+        $_SESSION['type'] = $row['type'];
+        $_SESSION['email'] = $email; 
+        if ($_SESSION['type'] == 'admin') {
+          header('Location: index.php'); 
+        }
+        else if ($_SESSION['type'] == 'owner') {
+          header('Location: ownerInterface.php'); 
+        }
       } else {
         echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">
                   <strong>Wrong Username or Password</strong>
@@ -59,7 +64,7 @@ session_start();
             <!-- Email input -->
           <div class="form-outline mb-4">
             <label class="form-label" for="form1Example13">Email address</label>
-            <input type="text" id="form1Example13" placeholder="Enter your email" class="form-control form-control-lg" name = "email"/>
+            <input type="email" id="form1Example13" placeholder="Enter your email" class="form-control form-control-lg" name = "email"/>
           </div>
 
           <!-- Password input -->
