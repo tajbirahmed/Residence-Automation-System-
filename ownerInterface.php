@@ -15,10 +15,17 @@ session_start();
                 $result = mysqli_query($con, $sql);
 
                 if ($result) {
-
+                     
+                    if (mysqli_num_rows($result) > 1)  {
+                        echo '<h1> Your Enlisted Buildings are</h1>';
+                    } else {
+                        echo '<h1> Your Enlisted Building is </h1>';
+                    }
                     while ($row = mysqli_fetch_assoc($result)) {
                         $hld = $row['holdingNumber'];
-                        $holding[$hld] = 1;
+                        $holding[$hld] = 1; 
+                        echo '<a href="owner/showBuildinginfo.php?showHolding='.$hld.'"><button class="btn btn-primary">'.$hld.'</button>';
+                        echo '    ';
                     }
 
                 }
@@ -40,36 +47,7 @@ session_start();
     <body>
         <div class="container my-5">
             <?php 
-                if (count($holding) > 1) {
-                    echo '<div style="float: left">
-                            <button class="btn btn-success">Previous</button>
-                          </div>';
-                    echo '<div style="float: right">
-                            <button class="btn btn-success">Next</button>
-                          </div>';
-                } else {
-                    echo '<div class="container my-5" style=    "display: block;
-                                                                margin-left: auto;
-                                                                margin-right: auto;
-                                                                width: 40%;">
-                          <img src="images.jpg" alt="slow connection" width="150px"><br>
-                          <div class="container mx-3" "display: block;
-                                margin-left: auto;
-                                margin-right: auto;
-                                width: 40%;"> <p style="font-size:25px; margin: auto;">'.$hld.'</p><br>
-                          </div>
-                          </div>'; 
-                }
-
+                 
             ?>
-            <table class="table"> 
-                <thead>
-
-                </thead>
-                <tbody>
-
-                </tbody>
-            </table>
-
         </div>
     </body>
