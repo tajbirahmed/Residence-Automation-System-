@@ -31,7 +31,7 @@
             <?php
             if (isset($_GET['id'])) {
                 $id = $_GET['id'];
-                $sql = "select * from owner where holdingNumber=$id";
+                $sql = "select * from `owner` where holdingNumber=$id";
                 $result = mysqli_query($con, $sql);
                 if ($result) {
                     while ($row = mysqli_fetch_assoc($result)) {
@@ -76,7 +76,7 @@
             <?php
             if (isset($_GET['id'])) {
                 $id = $_GET['id'];
-                $sql = "select * from location where holdingNumber=$id";
+                $sql = "select * from `location` where holdingNumber=$id";
                 $result = mysqli_query($con, $sql);
                 if ($result) {
                     $row = mysqli_fetch_assoc($result);
@@ -107,10 +107,13 @@
                     <th colspan="4" style="text-align:center">Apartments</th>
                 </tr>
                 <tr>
-                    <th scope="col">Apartment ID</th>
-                    <th scope="col">Size </th>
-                    <th scope="col">Rent per Month</th>
-                    <th scope="col">Availability</th>
+                    <th scope="col" style="text-align: center;">Apartment ID</th>
+                    <th scope="col" style="text-align: center;">Size </th>
+                    <th scope="col" style="text-align: center;">Rent per Month</th>
+                    <th scope="col" style="text-align: center;">Availability</th>
+                    <th scope="col" style="text-align: center;">Actions</th>
+                    <th scope="col" style="text-align: center;">Apply</th>
+                    
                 </tr>
         </thead>
         <tbody>
@@ -118,7 +121,7 @@
             if (isset($_GET['id'])) {
                 $id = $_GET['id'];
                 
-                $sql = "select * from apartment where holdingNumber=$id";
+                $sql = "select * from `apartment` where holdingNumber=$id";
                 $result=mysqli_query($con, $sql);
                 if ($result) {
                     
@@ -127,13 +130,25 @@
                         $size=$row['size'];
                         $rpdn=$row['rentpermonth'];
                         $avl=$row['availability'] ? "YES" : "NO";
-              
-                        echo '  <tr>
-                                <td>'.$aID.'</td>
-                                <td>'.$size.'</td>
-                                <td>'.$rpdn.'</td>
-                                <td>'.$avl.'</td>
-                                </tr>';
+                        
+                        
+                                 
+                        
+
+                        echo '<tr>
+                                <td style="text-align: center;">'.$aID.'</td>
+                                <td style="text-align: center;">'.$size.'</td>
+                                <td style="text-align: center;">'.$rpdn.'</td>
+                                <td style="text-align: center;">'.$avl.'</td>
+                                <td style="text-align: center;"><a href="Building/Apartments/view_apartment.php">
+                                    <button class="btn btn-primary">View</button></a></td>';
+                        if (!$row['availability']) {
+                            echo '<td style="text-align: center;"><a href="Building/Apartments/application.php">
+                                <button class="btn btn-success">Apply</button></a></td>';
+                        } else 
+                            echo '<td></td>';
+                        echo '</tr>';
+                        
                         
                     } 
                     
