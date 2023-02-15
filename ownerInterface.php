@@ -1,6 +1,8 @@
 <?php
 session_start(); 
     include_once('connect.php'); 
+    include_once('functions.php'); 
+    require_once('home/_nav_from_ownerinterface.php');
     if (isset($_SESSION['type'])) {
          
         if ($_SESSION['type'] == 'owner') {
@@ -8,13 +10,13 @@ session_start();
             $type = 'owner'; 
             
             if (isset($_SESSION['email'])){
-
+                
                 $email = $_SESSION['email']; 
-                $sql = "select * from owner where email='$email'"; 
+                $sql = "select * from owner where email='$email' and holdingNumber<>0"; 
 
                 $result = mysqli_query($con, $sql);
-
-                if ($result) {
+                
+                if (mysqli_num_rows($result) > 0) {
                      
                     if (mysqli_num_rows($result) > 1)  {
                         echo '<h1> Your Enlisted Buildings are</h1>';
@@ -24,11 +26,12 @@ session_start();
                     while ($row = mysqli_fetch_assoc($result)) {
                         $hld = $row['holdingNumber'];
                         $holding[$hld] = 1; 
-                        echo '<a href="owner/showBuildinginfo.php?showHolding='.$hld.'"><button class="btn btn-primary">'.$hld.'</button>';
+                        echo '<a href="owner/showBuildinginfo.php?showHolding='.$hld.'"><button class="btn btn-primary">'.showBuildingName($con, $hld).'</button>';
                         echo '    ';
                     }
 
-                }
+                } 
+
             } 
         }
     }
@@ -46,8 +49,6 @@ session_start();
     </head>
     <body>
         <div class="container my-5">
-            <?php 
-                 
-            ?>
+            <a href="Building/addbuilding.php?id=<?php echo $email; ?>"><button>Add New Building</button>
         </div>
     </body>
