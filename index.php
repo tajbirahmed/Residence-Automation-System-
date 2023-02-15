@@ -1,4 +1,5 @@
 <?php
+session_start();
     include_once('connect.php');
 ?>
 
@@ -13,7 +14,9 @@
         <title>Residence Automation System</title>
     </head>
     <body>
-
+        <?php 
+            require 'home/_nav.php';
+        ?>
         <div class="container my-5">
             <table class="table">
                 <thead>
@@ -22,7 +25,7 @@
                 </thead>
                 <tbody>
                     <?php
-                    session_start();
+                    
 
                         if (isset($_SESSION['type'])) {
                             if ($_SESSION['type'] == 'admin') {
@@ -51,6 +54,7 @@
                         $result = mysqli_query($con, $sql); 
                         $col = 1;
                         
+                        // showing building in index page
                         while ($row = mysqli_fetch_assoc($result)) {
                             if ($col == 1) {
                                 echo '<tr>';
