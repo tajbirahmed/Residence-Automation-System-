@@ -14,11 +14,11 @@ session_start();
                     !empty($_POST['bhk'])){
                         $size = $_POST['size']; 
                         $rpm = $_POST['rpm']; 
-                        $aid = $_POST['aid']; 
+                        $aid = $hld . '-' . $_POST['aid']; 
                         $bhk = $_POST['bhk'];
 
-                        $sql = "INSERT INTO `apartment` (`ApartmentID`, `holdingNumber`,`rentpermonth`, `size`, `BHK`) 
-                                VALUES ('$aid', '$hld' ,'$rpm', '$size', '$bhk')";
+                        $sql = "INSERT INTO `apartment` (`ApartmentID`, `holdingNumber`,`rentpermonth`, `size`, `BHK`, `availability`) 
+                                VALUES ('$aid', '$hld' ,'$rpm', '$size', '$bhk', 1)";
 
                         mysqli_query($con, $sql);
                         header('Location: ../../owner/showBuildinginfo.php?showHolding='.$hld.'');
