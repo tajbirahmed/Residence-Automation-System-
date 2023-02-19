@@ -13,6 +13,7 @@
    
 
 <?php
+    require_once('../home/_nav_from_show_building_info.php');
     include_once('../connect.php');
     
     if (isset($_GET['showHolding'])) {
@@ -79,10 +80,12 @@
                     
                     echo '<td style="text-align: center;">'; 
                     if (!$row['availability'])
-                        echo '<a href="../Building/tenant_info.php?aid='.$aid.'&hld='.$hld.'"><button class="btn btn-success">Details</button></a>';
+                        echo '<a href="../Building/tenant_info.php?aid='.$aid.'"><button class="btn btn-success">Details</button></a>';
+                    echo ' ';
                     if ($row['availability'])
-                        echo '<a href="../Building/Apartments/tenant_update.php?aid='.$aid.'&hld='.$hld.'"><button class="btn btn-primary">Update</button></a>';
-                    echo '<button class="btn btn-danger">Delete Apartment</button>
+                        echo '<a href="../Building/Apartments/tenant_update.php?aid='.$aid.'&hld='.$hld.'"><button class="btn btn-primary">Add Tenant</button></a>';
+                    echo ' ';
+                        echo '<button class="btn btn-danger">Delete Apartment</button>
                     </td>
                     </tr>';
                     
@@ -91,7 +94,7 @@
         ?>
                 </tbody>
             </table>
-        </div>
+            </div>
             <div class="container">
                 <form method="post" action="../Building/Apartments/addapartment.php?id=<?php echo $hld ?>">
                     <h3>Add Apartment to Building</h3>
