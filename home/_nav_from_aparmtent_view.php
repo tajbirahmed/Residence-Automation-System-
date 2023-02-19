@@ -24,6 +24,12 @@
                   <a class="nav-link" href="../../ProfileSystem/logout.php">Logout</a>
                 </li>';
                }
+               if (isset($_SESSION['email'])) {
+                echo '<li class="nav-item active">
+                <a class="nav-link" href="../../ownerInterface.php">My Profile<span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">'; 
+            }
       ?>
     </ul>
   </div>
