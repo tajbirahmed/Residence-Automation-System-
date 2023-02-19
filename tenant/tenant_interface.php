@@ -2,13 +2,15 @@
     include_once('../connect.php'); 
     if (isset($_GET['id'])) {
         $userid = $_GET['id']; 
-        $sql = "SELECT * from apartment where concat(holdingNumber, ApartmentID, '@ras.com')='$userid' limit 1";
+        // Checking if Apartment exists in 
+        $sql = "SELECT * from apartment where concat(ApartmentID, '@ras.com')='$userid' limit 1";
         $result = mysqli_query($con, $sql); 
         $row = mysqli_fetch_assoc($result); 
-        $sql1 = "SELECT * from tenant where concat(holdingNumber, ApartmentID, '@ras.com')='$userid' limit 1";
+        $sql1 = "SELECT * from tenant where concat(ApartmentID, '@ras.com')='$userid' limit 1";
         $result1 = mysqli_query($con, $sql1);
         $row1 = mysqli_fetch_assoc($result1); 
     }
+    // MORE 
 ?>
 
 <!doctype html>
@@ -44,6 +46,14 @@
                     </tr>
                 </tbody>
             </table>
+        </div><div class="container my-5">
+                <?php 
+                    $temp = $row['ApartmentID']; 
+                ?>
+            <form action="tenant_profile.php" method="post">
+                
+                <button class="btn btn-success" name="button">View Profile</button>
+            </form>
         </div>
     </body>
 </html>
