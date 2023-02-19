@@ -7,7 +7,7 @@
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
     <li class="nav-item active">
-        <a class="nav-link" href="../Building/Apartments/index.php">Apartment View <span class="sr-only">(current)</span></a>
+        <a class="nav-link" href="../Building/Apartments/index.php">Explore Apartments<span class="sr-only">(current)</span></a>
       </li>
       <?php
       if (!isset($_SESSION['email']) && !isset($_SESSION['type'])) {
@@ -15,6 +15,7 @@
                     <a class="nav-link" href="../ProfileSystem/login.php">Login <span class="sr-only">(current)</span></a>
                   </li>';
       }
+      
 
       ?>
       <?php
