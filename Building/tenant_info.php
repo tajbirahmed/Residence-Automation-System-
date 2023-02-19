@@ -13,10 +13,11 @@
   <body>
     <?php
         include_once('../connect.php'); 
-        if (isset($_GET['aid']) && isset($_GET['hld'])) {
+        if (isset($_GET['aid'])) {
             $aid = $_GET['aid'];
-            $hld = $_GET['hld']; 
-            $sql = "select * from tenant where holdingNumber=$hld and apartmentid='$aid'";
+            // Detail of a specific apartement where it has a tenant
+
+            $sql = "select * from tenant where  ApartmentID='$aid'";
             $result = mysqli_query($con, $sql); 
             if (mysqli_num_rows($result)) {
                 while ($row = mysqli_fetch_assoc($result)) {
@@ -24,27 +25,23 @@
                     $lname = $row['last_name']; 
                     $phone = $row['phone']; 
                     $email = $row['email']; 
-                    $image = $row['image']; 
+                    $img = $row['image']; 
                     $nid = $row['nid'];
                 } 
-            } else {
-                header('Location:../owner/showBuildinginfo.php?showHolding='.$hld.'');
             }
         }
-
+        
     ?>
-
-
-  <div class="card" style="width: 18rem; ;margin: auto; width: 20%; padding: 10px;">
-    <img class="card-img-top" src="imageavatar.jpg" alt="Slow internet">
+    <div class="card" style="width: 18rem; ;margin: auto; width: 20%; padding: 10px;">
+    <img class="card-img-top" src="<?php  echo $img; ?>" alt="Slow internet">
         <div class="card-body">
-            <p style="font-size: 20px">Name: <?php echo ''.$fname.' '.$lname.''; ?></p>
-            <p style="font-size: 15px">Phone: <?php echo ''.$phone.' '; ?></p>
-            <p style="font-size: 15px">Email: <?php echo ''.$email.' '; ?></p>
-            <p style="font-size: 15px">NID: <?php echo ''.$nid.' '; ?></p> 
+            <p style="font-size: 20px">Name: <?php echo $fname;  echo $lname; ?></p>
+            <p style="font-size: 15px">Phone: <?php echo $phone ?></p>
+            <p style="font-size: 15px">Email: <?php echo $email ?></p>
+            <p style="font-size: 15px">NID: <?php echo $nid ?></p>
+
         </div>
     </div>
-
 
   </body>
 </html>
