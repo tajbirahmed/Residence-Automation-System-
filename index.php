@@ -1,6 +1,7 @@
 <?php
 session_start();
     include_once('connect.php');
+    include_once('functions.php');
 ?>
 
 <!doctype html>
@@ -35,10 +36,11 @@ session_start();
                                 $type = 'owner'; 
                                 if (isset($_SESSION['email'])){
                                     $email = $_SESSION['email']; 
-                                    $sql = "select * from owner where email='$email'"; 
-
+                                    
+                                    // For showing button to specific user in home page
+                                    // For updation and deletion of a specific building!?
+                                    $sql = "select * from own where email='$email'"; 
                                     $result = mysqli_query($con, $sql);
-
                                     if ($result) {
                                         while ($row = mysqli_fetch_assoc($result)) {
                                             $hld = $row['holdingNumber'];
@@ -49,20 +51,22 @@ session_start();
                             }
                         }
 
-                            $sql = "select * from building"; 
-
-                        $result = mysqli_query($con, $sql); 
-                        $col = 1;
+                        
                         
                         // showing building in index page
+                        // to specific user
+                        $sql = "select * from building"; 
+                        $result = mysqli_query($con, $sql); 
+                        $col = 1;
                         while ($row = mysqli_fetch_assoc($result)) {
+                            $img = $row['image'];
                             if ($col == 1) {
                                 echo '<tr>';
                             }
                             echo '<td>
                                     <a href="displayApartment.php?id='.$row['holdingNumber'].'" class="text-light">
                                         <div class="card" style="width: 12rem;">
-                                        <img class="card-img-top" src="images.jpg" alt="Card image cap">
+                                        <img class="card-img-top" src="images/'.$img.'" alt="Card image cap" style="width: 190px; height: 150px;">
                                             <div class="card-body text-dark">
                                             '.$row['holdingNumber'].' <br>
                                             '.$row['buildingName'].' <br>
@@ -73,7 +77,7 @@ session_start();
                                 $hld = $row['holdingNumber']; 
                                 if ($type == 'admin' || ($type == 'owner' && isset($holding[$hld]))) {
                                     echo '<button class="btn btn-primary">Update</button>
-                                            <button class="btn btn-danger">Delete</button>';
+                                            <a href="Building/deleteBuilding.php?hld='.$hld.'"><button class="btn btn-danger">Delete</button></a>';
                                 }
                             }
                             echo '</td>';
