@@ -12,7 +12,7 @@ session_start();
             if (isset($_SESSION['email'])){
                 
                 $email = $_SESSION['email']; 
-                $sql = "select * from owner where email='$email' and holdingNumber<>0"; 
+                $sql = "select * from own where email='$email' and holdingNumber<>0"; 
 
                 $result = mysqli_query($con, $sql);
                 
