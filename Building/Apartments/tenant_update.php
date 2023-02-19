@@ -3,12 +3,14 @@
     if (isset($_GET['aid']) && isset($_GET['hld'])) {
         $aid = $_GET['aid']; 
         $hld = $_GET['hld'];
-        // echo 'Success';
+        // Updating information of a tenant 
+        // by owner
         if (isset($_POST['fname']) && 
             isset($_POST['lname']) && 
             isset($_POST['phone']) && 
             isset($_POST['email']) && 
-            isset($_POST['NID'])) { 
+            isset($_POST['NID']) && 
+            isset($_POST['fdesc']) ) { 
 
             $fname = $_POST['fname']; 
             $lname = $_POST['lname']; 
@@ -18,17 +20,38 @@
             $fdesc = $_POST['fdesc']; 
              
             if (!empty($fname) && !empty($lname) && !empty($phone) && !empty($email) && !empty($nid) && !empty($fdesc)) {
+                // Inserting information about tenant.
+                // by owner 
+                $image = $_FILES['image']; 
+                
+                $filename = explode('.', $image['name']); 
+                $extensions = array('jpeg', 'jpg', 'png');
+                if (in_array(strtolower($filename[1]), $extensions)) {
+                    $upload_image = '../../images/tenant/'. $aid . '.' . $filename[1];
+                    move_uploaded_file($image['tmp_name'], $upload_image); 
+                        
+                    $upload_image = 'tenant/' . $aid . '.' . $filename[1];
+                
                 $sql = "INSERT INTO `tenant` 
-                    (`holdingNumber`, `apartmentid`, `first_name`, `last_name`, `phone`, `email`, `image`, `nid`, `fdesc`) 
-                    VALUES ('$hld', '$aid', '$fname', '$lname', '$phone', '$email', '', '$nid', '$fdesc')";
+                    (`apartmentid`, `first_name`, `last_name`, `phone`, `email`, `image`, `nid`, `fdesc`) 
+                    VALUES ('$aid', '$fname', '$lname', '$phone', '$email', '$upload_image', '$nid', '$fdesc')";
                 mysqli_query($con, $sql); 
-                $username = $hld.$aid.'@ras.com';
-                $sql = "insert into `user` (`username`, `password`, `type`) 
+                
+                // Creating an account for tenant in user table
+                // default password sets NID
+                $username = $aid . '@ras.com';
+                $sql = "INSERT into `user` (`username`, `password`, `type`) 
                                      values('$username', '$nid', 'tenant')"; 
                 mysqli_query($con, $sql);
+                // Updating availability 
+                // because tenant addition means apartment is not available
+                $sql = "UPDATE apartment set availability = 0 where ApartmentID='$aid'"; 
+                mysqli_query($con, $sql);
+
+                header('Location: ../../owner/showBuildinginfo.php?showHolding='.$hld.'');
             }
             
-            
+        }
         }
         
     } 
@@ -47,40 +70,47 @@
         </head>
         <body>
             <div class="container my-5">
-                <form method="post">
+                <form method="post" enctype="multipart/form-data">
+                    
                     <div class="form-group">
                         <label for="exampleInputEmail1">First Name</label>
                         <input name = "fname" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter first name">
                         
                     </div>
+                    
                     <div class="form-group">
                         <label for="exampleInputEmail1">Last Name</label>
                         <input name = "lname" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter last name">
                         
                     </div>
+                    
                     <div class="form-group">
                         <label for="exampleInputEmail1">Phone</label>
                         <input name = "phone" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter phone">
                         
                     </div>
+                    
                     <div class="form-group">
                         <label for="exampleInputEmail1">Email</label>
                         <input name = "email" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
                         
                     </div>
+                    
                     <div class="form-group">
                         <label for="exampleInputEmail1">NID</label>
                         <input name = "NID" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter NID">
                         
                     </div>
+                    
                     <div class="form-group">
                         <label for="exampleInputEmail1">Family Description</label>
                         <input name = "fdesc" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter small description of family">
                         
                     </div>
+
                     <div class="form-group">
                         <label for="exampleInputEmail1">Image</label>
-                        <input name = "" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter image">
+                        <input name = "image" type="file" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter image">
                         
                     </div>
                     
