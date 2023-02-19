@@ -1,6 +1,7 @@
 <?php
     include_once('../connect.php'); 
     require_once('../home/nav_from_signup.php');
+    include_once('../functions.php');
     if (isset($_POST['signup'])) {
         if (isset($_POST['fname']) && isset($_POST['lname'] ) && 
         isset($_POST['phnno']) && isset($_POST['email']) && 
@@ -14,15 +15,28 @@
                     $email = $_POST['email']; 
                     $phn = $_POST['phnno']; 
                     $password = $_POST['password'];
+                    $image = $_FILES['image'];
                     
-                    $sql = "INSERT INTO `owner` (`first_name`, `last_name`, `phone`, `email`) VALUES ('$fname', '$lname', '$phn', '$email')";
-                    mysqli_query($con, $sql);
+                    $filename = explode('.', $image['name']); 
+                    $extensions = array('jpeg', 'jpg', 'png');
+                    if (in_array(strtolower($filename[1]), $extensions)) {
+                        $upload_image = '../images/owner/'. $email . '.' . $filename[1];
+                        move_uploaded_file($image['tmp_name'], $upload_image); 
+                        
+                        $upload_image = 'owner/' . $email . '.' . $filename[1];
+                        $sql = "INSERT INTO `user` (`username`, `password`, `type`) VALUES ('$email', '$password', 'owner')";
+                        mysqli_query($con, $sql);
+                        
 
-                    $sql = "INSERT INTO `user` (`username`, `password`, `type`) VALUES ('$email', '$password', 'owner')";
-                    mysqli_query($con, $sql);
+                        $sql = "INSERT INTO `owner` (`first_name`, `last_name`, `phone`, `email`, `image`) VALUES ('$fname', '$lname', '$phn', '$email', '$upload_image')";
+                        mysqli_query($con, $sql);
 
-                    header('Location:login.php'); 
-                } else {
+
+                        header('Location:login.php'); 
+                    }
+                }
+
+                else {
                     // pass not same;
                 }
             }
@@ -76,7 +90,7 @@
             
             <div class="form-group">
                 <label for="exampleInputPassword1">Image</label> <br>
-                <input type="file" accept=".gif,.jpg,.jpeg,.png" name="image" id="fileToUpload">
+                <input type="file" accept=".jpg,.jpeg,.png" name="image" id="fileToUpload">
             </div>
             
             <button type="submit" class="btn btn-primary" name="signup">Sign Up</button> 
