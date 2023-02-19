@@ -8,26 +8,32 @@ include_once('../connect.php');
                     $hld = $_POST['hld']; 
                     $bname = $_POST['bname']; 
                     if (!empty($hld) && !empty($bname)) {
-                        $sql = "SELECT * from owner where email='$email'";
-                        $result = mysqli_query($con, $sql); 
-                        $row = mysqli_fetch_assoc($result); 
-                        $oid = $row['ownerID']; 
-                        $sql = "INSERT into building (`holdingNumber`, `buildingName`, `ownerID`) 
-                                                values ('$hld', '$bname', '$oid')"; 
-                        mysqli_query($con, $sql);
-                        if ($row['holdingNumber']) {
-                            $email = $row['email']; 
-                            $fname = $row['first_name']; 
-                            $lname = $row['last_name']; 
-                            $phone = $row['phone'];
-                            $sql = "INSERT into owner (`ownerID`, `holdingNumber`, `first_name`, `last_name`, `phone`, `email`) 
-                                                    values('$oid', '$hld', '$fname', '$lname', '$phone', '$email')";
-                        
-                        } else {
-                            $sql = "UPDATE owner set holdingNumber = $hld where email = '$email'";
+                        $image = $_FILES['image'];
+                    
+                        $filename = explode('.', $image['name']); 
+                        $extensions = array('jpeg', 'jpg', 'png');
+                        if (in_array(strtolower($filename[1]), $extensions)) {
+                            $upload_image = '../images/building/'. $hld . '.' . $filename[1];
+                            move_uploaded_file($image['tmp_name'], $upload_image);
+
+                            $sql = "SELECT * from owner where email='$email'";
+                            $result = mysqli_query($con, $sql); 
+                            $row = mysqli_fetch_assoc($result); 
+
+                            
+                            $upload_image = 'building/' . $hld . '.' . $filename[1];
+                            $sql = "INSERT into building (`holdingNumber`, `buildingName`, `image`) 
+                                                    values ('$hld', '$bname', '$upload_image')"; 
+                            mysqli_query($con, $sql);
+                            
+                           
+                            $sql = "INSERT into own (`email`, `holdingNumber`) values ('$email', '$hld')"; 
+                            
+                            mysqli_query($con, $sql);
+                            
+                            
+                            header('location:../ownerInterface.php');
                         }
-                        mysqli_query($con, $sql);
-                        header('location:../ownerInterface.php');
                     }
                 }
             }
@@ -50,18 +56,18 @@ include_once('../connect.php');
     </head>
     <body>
     <div class="container">
-        <form method="post">
+        <form method="post" enctype="multipart/form-data">
             <div class="form-group">
                 <label>Holding Number</label>
-                <input type="number" name="hld" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
+                <input type="number" name="hld" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Holding">
             </div>
             <div class="form-group">
                 <label>Building Name</label>
-                <input type="text" name="bname" class="form-control" id="exampleInputPassword1" placeholder="Password">
+                <input type="text" name="bname" class="form-control" id="exampleInputPassword1" placeholder="Enter Building Name">
             </div>
             <div class="form-group">
                 <label for="exampleInputPassword1">Image</label> <br>
-                <input type="file" accept=".gif,.jpg,.jpeg,.png" name="image" id="fileToUpload">
+                <input type="file" accept=".jpg,.jpeg,.png" name="image" id="fileToUpload">
             </div>
             <button type="submit" name="submit" class="btn btn-primary">Submit</button>
         </form>
