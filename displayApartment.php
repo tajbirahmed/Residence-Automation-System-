@@ -31,7 +31,7 @@
             <?php
             if (isset($_GET['id'])) {
                 $id = $_GET['id'];
-                $sql = "select * from `owner` where holdingNumber=$id";
+                $sql = "select * from `owner` where email= ANY (SELECT email from own where holdingNumber = $id)";
                 $result = mysqli_query($con, $sql);
                 if ($result) {
                     while ($row = mysqli_fetch_assoc($result)) {
@@ -40,14 +40,14 @@
                             $lname = $row['last_name'];
                             $phn = $row['phone'];
                             $email = $row['email'];
-                            // $img = $row['houseNo'];
+                            $img = $row['image'];
                             
                             echo '<tr>
                             <td>' . $fname . '</td>
                             <td>' . $lname . '</td>
                             <td>' . $phn . '</td>
                             <td>' . $email . '</td>
-                            <td> <img src="imageavatar.jpg" alt="slow connection" width="150px"></td>
+                            <td> <img src="images/'.$img.'" alt="slow connection" width="100px"></td>
                             </tr>';
                             
                         }
