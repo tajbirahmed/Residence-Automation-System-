@@ -1,5 +1,7 @@
 <?php
-session_start();
+    header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
+    header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
+    session_start();
     include_once('connect.php');
     include_once('functions.php');
 ?>
@@ -27,7 +29,10 @@ session_start();
                 <tbody>
                     <?php
                     
-
+                        // A redundant section 
+                        // Basically used for showing UPDATE and DELETE 
+                        // button in index page
+                        // !!?? 
                         if (isset($_SESSION['type'])) {
                             if ($_SESSION['type'] == 'admin') {
                                 $type = 'admin';
@@ -73,13 +78,7 @@ session_start();
                                             </div>
                                         </div>
                                     </a>';
-                            if (isset($type)) {
-                                $hld = $row['holdingNumber']; 
-                                if ($type == 'admin' || ($type == 'owner' && isset($holding[$hld]))) {
-                                    echo '<button class="btn btn-primary">Update</button>
-                                            <a href="Building/deleteBuilding.php?hld='.$hld.'"><button class="btn btn-danger">Delete</button></a>';
-                                }
-                            }
+                            
                             echo '</td>';
                             $col++;
                             if ($col == 5) {
