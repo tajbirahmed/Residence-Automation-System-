@@ -1,6 +1,17 @@
 <?php
+session_start();
+    // What this file is doing? 
+    // When clicking on a card in index page 
+    // this file is responsible for showing the information aobut 
+    // owner and Apartments of the building that was clicked
+    // there is a view button for each apartment and 
+    // any user can apply to an empty apartment
+    // that is beside any empty apartment there should be an apply button. 
+    // And also any building owner can't apply to a building to reduce cmplexity.
     include_once('connect.php');
-    
+    if (isset($_GET['id'])) {
+        $id = $_GET['id'];
+    }
 ?>
 <!doctype html>
 <html lang="en">
@@ -10,9 +21,12 @@
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"> 
 
-    <title>Display</title>
+    <title>Display Building <?php echo $id;?></title>
   </head>
   <body>
+    <?php
+        require_once('home/_nav.php');
+    ?>
     <div class="container">
     <table class="table">
         <thead> 
@@ -30,7 +44,7 @@
         <tbody>
             <?php
             if (isset($_GET['id'])) {
-                $id = $_GET['id'];
+                //$id = $_GET['id'];
                 $sql = "select * from `owner` where email= ANY (SELECT email from own where holdingNumber = $id)";
                 $result = mysqli_query($con, $sql);
                 if ($result) {
@@ -142,8 +156,11 @@
                                 <td style="text-align: center;">'.$avl.'</td>
                                 <td style="text-align: center;"><a href="Building/Apartments/view_apartment.php">
                                     <button class="btn btn-primary">View</button></a></td>';
-                        if (!$row['availability']) {
-                            echo '<td style="text-align: center;"><a href="Building/Apartments/application.php">
+                        // Changed the condition that an owner/ tenant can't apply to any 
+                        // available building.
+                        // ~~Not verified~~
+                        if ($row['availability'] && !isset($_SESSION['email'])) {
+                            echo '<td style="text-align: center;"><a href="#">
                                 <button class="btn btn-success">Apply</button></a></td>';
                         } else 
                             echo '<td></td>';
