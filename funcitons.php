@@ -6,7 +6,10 @@
         return $row['buildingName'];
 
     }
-    function get_apartment_id($email) {
-        
+    function show_date($rcd) {
+        if ($rcd != 'empty') {
+            return date_format($rcd, "d-m-Y"); 
+        }
+        return '';
     }
 ?>
