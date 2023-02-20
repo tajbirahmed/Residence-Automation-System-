@@ -42,27 +42,30 @@
                                 </thead>
                                 <tbody>';
                     while ($row = mysqli_fetch_assoc($result)) {
+                        
                         $hld = $row['holdingNumber'];
                         $sql1 = "SELECT * from building where holdingNumber=$hld limit 1"; 
                         $result1 = mysqli_query($con, $sql1);
                         $row1 = mysqli_fetch_assoc($result1);
                         $image = $row1['image']; 
+                        $update='update';
+                        $delete='delete';
                         echo '<tr>
                                 <td>'.$row1['buildingName'].'</td>
                                 <td>'.$hld.'</td>
                                 <td><img src="images/'.$image.'" style="width: 150px;"></td>
                                 <td>
-                                    <a href="displayApartment.php?id='.$hld.'"><button class="btn btn-primary">View</button></a>
-                                    <a href="Building/update_building.php?id='.$hld.'"><button class="btn btn-success">Update</button></a>
-                                    <button class="btn btn-danger">Delete</button>
+                                    <a href="owner/showbuildinginfo.php?showHolding='.$hld.'"><button class="btn btn-primary">View</button></a>
+                                    <a href="Building/modify_building.php?id='.$hld.'&action='.$update.'"><button class="btn btn-success">Update</button></a>
+                                    <a href="Building/modify_building.php?id='.$hld.'&action='.$delete.'"><button class="btn btn-danger">Delete</button></a>
                                 </td>
                                 ';
                     }            
 
 
 
-                                echo '</tbody>
-                            </table></div>';    
+                    echo '</tbody>
+                        </table></div>';    
 
                     
 
