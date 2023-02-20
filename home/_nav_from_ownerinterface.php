@@ -22,12 +22,18 @@
             ?>
     <?php 
         if (isset($_SESSION['email']) && isset($_SESSION['type'])){
-          echo '<li class="nav-item">
-            <a class="nav-link" href="ProfileSystem/logout.php">Logout</a>
-          </li>';
+            echo '<li class="nav-item">
+              <a class="nav-link" href="ProfileSystem/logout.php">Logout</a>
+            </li>';
         }
-          ?>
-      
+          
+          if ($_SESSION['type'] == 'owner'){ 
+              echo '<li class="nav-item active">
+              <a class="nav-link" href="owner/owner_profile.php">Account Details</a>
+              </li>';
+
+        }
+        ?>
     </ul>
   </div>
 </nav>
