@@ -26,9 +26,14 @@
                }
                if (isset($_SESSION['email'])) {
                 echo '<li class="nav-item active">
-                <a class="nav-link" href="../../ownerInterface.php">My Profile<span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="../../ownerInterface.php">Enlisted Building<span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item">'; 
+                echo '<li class="nav-item active">
+                <a class="nav-link" href="../../owner/owner_profile.php">My Profile<span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">'; 
+                
             }
       ?>
     </ul>
