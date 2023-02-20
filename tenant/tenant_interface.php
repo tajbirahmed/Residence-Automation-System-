@@ -26,6 +26,7 @@
     <title>TENANT VIEW</title>
     </head>
     <body>
+        <?php session_start(); require_once('../home/_nav_from_show_building_info.php');?>
         <div class="container">
             <table class="table">
                 <h1> Info about your apartment.</h1>
@@ -47,13 +48,7 @@
                 </tbody>
             </table>
         </div><div class="container my-5">
-                <?php 
-                    $temp = $row['ApartmentID']; 
-                ?>
-            <form action="tenant_profile.php" method="post">
-                
-                <button class="btn btn-success" name="button">View Profile</button>
-            </form>
+        
         </div>
     </body>
 </html>
