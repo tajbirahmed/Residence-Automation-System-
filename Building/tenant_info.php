@@ -1,3 +1,27 @@
+<?php 
+include_once('../connect.php');
+    if (isset($_GET['aid'])) {
+        $aid = $_GET['aid']; 
+      if (isset($_POST['delete'])) {
+
+            $sql = "DELETE from `tenant` where ApartmentID='$aid'"; 
+            $result = mysqli_query($con, $sql); 
+            $sql = "DELETE from `user` where username=concat('$aid', '@ras.com')"; 
+            $result = mysqli_query($con, $sql); 
+            
+            if ($result) {
+                $sql = "UPDATE `apartment` 
+                      set availability = 1
+                      where ApartmentID='$aid'";
+                $result = mysqli_query($con, $sql);
+                if ($result) {
+                  $hld = explode('-', $aid); 
+                   header('Location:../owner/showBuildinginfo.php?showHolding='.$hld[0].'');
+                }
+            }
+          }
+    }
+?>
 <!doctype html>
 <html lang="en">
   <head>
@@ -12,6 +36,8 @@
   </head>
   <body>
     <?php
+    session_start();
+    require_once('../home/_nav_from_show_building_info.php');
         include_once('../connect.php'); 
         if (isset($_GET['aid'])) {
             $aid = $_GET['aid'];
@@ -27,14 +53,16 @@
                     $email = $row['email']; 
                     $img = $row['image']; 
                     $nid = $row['nid'];
+                    $nid_image = $row['nid_image'];
                 } 
             }
         }
         
     ?>
     <div class="card" style="width: 18rem; ;margin: auto; width: 20%; padding: 10px;">
-    <img class="card-img-top" src="<?php  echo $img; ?>" alt="Slow internet">
-        <div class="card-body">
+    <img class="card-img-top" src="../images/<?php  echo $img; ?>" style="height:300px;"alt="Slow internet">
+    <img class="card-img-top" src="../images/<?php  echo $nid_image; ?>" alt="Slow internet">  
+      <div class="card-body">
             <p style="font-size: 20px">Name: <?php echo $fname;  echo $lname; ?></p>
             <p style="font-size: 15px">Phone: <?php echo $phone ?></p>
             <p style="font-size: 15px">Email: <?php echo $email ?></p>
@@ -42,6 +70,10 @@
 
         </div>
     </div>
-
+    <div class="container" style="text-align: center;">
+        <form method="post">
+            <button class="btn btn-danger" name="delete">Delete Tenant</button>
+        </form>
+    </div>
   </body>
 </html>
