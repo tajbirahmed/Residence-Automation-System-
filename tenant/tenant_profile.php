@@ -1,6 +1,7 @@
 <?php 
 Session_start();
     include_once('../connect.php'); 
+        
         $temp = explode('@', $_SESSION['email']);
         $aid = $temp[0]; 
         if (!empty($aid)) {
@@ -15,6 +16,7 @@ Session_start();
                 $nid = $row['nid']; 
                 $fdesc = $row['fdesc']; 
                 $img = $row['image'];
+                $nid_img = $row['nid_image']; 
             }
             $aid = $aid . '@ras.com';
             $sql = "SELECT * from user where username='$aid'"; 
@@ -32,8 +34,9 @@ Session_start();
                             set password = '$cpass' 
                             where username='$aid'";
                 mysqli_query($con, $sql);
+                
+                header('Location: ../ProfileSystem/login.php');
             }
-            header('Location: ../ProfileSystem/login.php');
         }
     
     ?>
@@ -51,6 +54,7 @@ Session_start();
         <title>TENANT PROFILE</title>
     </head>
     <body>
+        <?php require_once('../home/_nav_from_show_building_info.php');?>
         <div class="container my-4">
             <form method="post" enctype="multipart/form-data">
             
@@ -86,7 +90,11 @@ Session_start();
                 
                 <div class="form-group">
                     <label for="lname">Image</label>
-                    <img src="../images/<?php echo $img?>" style="width: 100px;">
+                    <img src="../images/<?php echo $img?>" style="width: 300px;">
+                </div>
+                <div class="form-group">
+                    <label for="lname">NID image</label>
+                    <img src="../images/<?php echo $nid_img?>" style="width: 600px;">
                 </div>
                 
                 <div class="form-group">
