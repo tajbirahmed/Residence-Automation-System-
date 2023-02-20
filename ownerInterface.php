@@ -1,12 +1,18 @@
 <?php
-session_start(); 
+    // It is the page where an owner redirected to 
+    // after successfully logged in 
+    // and here is a list of that owner owned 
+    // buildings along with a important button Add building
+    // with which an owner can add any number of buildings he want.
+    header("Cache-Control: no-cache, must-revalidate");
+    header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
+    session_start(); 
     include_once('connect.php'); 
     include_once('functions.php'); 
     require_once('home/_nav_from_ownerinterface.php');
     if (isset($_SESSION['type'])) {
          
         if ($_SESSION['type'] == 'owner') {
-            
             $type = 'owner'; 
             
             if (isset($_SESSION['email'])){
@@ -19,16 +25,46 @@ session_start();
                 if (mysqli_num_rows($result) > 0) {
                      
                     if (mysqli_num_rows($result) > 1)  {
-                        echo '<h1> Your Enlisted Buildings are</h1>';
+                        echo '<h1 style="text-align: center;"> Your Enlisted Buildings are</h1>';
                     } else {
-                        echo '<h1> Your Enlisted Building is </h1>';
+                        echo '<h1 style="text-align: center;"> Your Enlisted Building is </h1>';
                     }
+
+                    echo '<div class="container">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th scope="col">Building Name</th>
+                                    <th scope="col">Holding Number</th>
+                                    <th scope="col">Image</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>';
                     while ($row = mysqli_fetch_assoc($result)) {
                         $hld = $row['holdingNumber'];
-                        $holding[$hld] = 1; 
-                        echo '<a href="owner/showBuildinginfo.php?showHolding='.$hld.'"><button class="btn btn-primary">'.showBuildingName($con, $hld).'</button>';
-                        echo '    ';
-                    }
+                        $sql1 = "SELECT * from building where holdingNumber=$hld limit 1"; 
+                        $result1 = mysqli_query($con, $sql1);
+                        $row1 = mysqli_fetch_assoc($result1);
+                        $image = $row1['image']; 
+                        echo '<tr>
+                                <td>'.$row1['buildingName'].'</td>
+                                <td>'.$hld.'</td>
+                                <td><img src="images/'.$image.'" style="width: 150px;"></td>
+                                <td>
+                                    <a href="displayApartment.php?id='.$hld.'"><button class="btn btn-primary">View</button></a>
+                                    <a href="Building/update_building.php?id='.$hld.'"><button class="btn btn-success">Update</button></a>
+                                    <button class="btn btn-danger">Delete</button>
+                                </td>
+                                ';
+                    }            
+
+
+
+                                echo '</tbody>
+                            </table></div>';    
+
+                    
 
                 } 
 
