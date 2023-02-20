@@ -13,6 +13,7 @@
    
 
 <?php
+session_start();
     require_once('../home/_nav_from_show_building_info.php');
     include_once('../connect.php');
     
@@ -25,7 +26,7 @@
             $name = $row['buildingName']; 
             $hld = $row['holdingNumber']; 
             $img = $row['image']; 
-            echo '<div class="building-info">
+            echo '<div class="building-info" style="text-align: center;">
                         <h1 class="building-name">'.$name.'</h1>
                         <p class="holding-number">Holding Number: '.$hld.'</p>
 
@@ -56,26 +57,38 @@
                      <tbody>
         <?php
             include_once('../connect.php');
+            include_once('../functions.php');
             if (isset($hld)) {
                 $sql = "select * from apartment where holdingNumber=$hld";
                 $result = mysqli_query($con, $sql); 
-        
+                
                 while ($row = mysqli_fetch_assoc($result)) {
                     $aid = $row['ApartmentID']; 
                     $rpdn = $row['rentpermonth']; 
                     $size = $row['size']; 
+                    
+                    
+                    $sql1 = "SELECT registerddate from tenant where ApartmentID='$aid' limit 1";
+                    $result1 = mysqli_query($con, $sql1); 
+                    if (mysqli_num_rows($result1)){
+                        $row1 = mysqli_fetch_assoc($result1);
+                        $rcd = date_create($row1['registerddate']);
+                        date_add($rcd, date_interval_create_from_date_string("7 days"));
+                    } else {
+                        $rcd='empty';
+                    }
                     $avl=$row['availability'] ? "Empty" : "Rented";
                     if ($avl == "Empty") 
                         $col = "red"; 
                     else 
                         $col = "green";
-                    
+                    $rcd = show_date($rcd);
                     echo '  <tr>
                     <td style="text-align: center;font-weight: bold;">'.$aid.'</td>
                     <td style="text-align: center;">'.$size.'</td>
                     <td style="text-align: center; ">'.$rpdn.'</td>
                     <td style="text-align: center; color: '.$col.'; font-weight: bold; font-size: 19px">'.$avl.'</td>
-                    <td style="text-align: center;"> </td>
+                    <td style="text-align: center;"> '.$rcd.' </td>
                     <td style="text-align: center;"> </td>';
                     
                     echo '<td style="text-align: center;">'; 
@@ -85,7 +98,7 @@
                     if ($row['availability'])
                         echo '<a href="../Building/Apartments/tenant_update.php?aid='.$aid.'&hld='.$hld.'"><button class="btn btn-primary">Add Tenant</button></a>';
                     echo ' ';
-                        echo '<button class="btn btn-danger">Delete Apartment</button>
+                        echo '<a href="../Building/Apartments/delete_apartment.php?hld='.$hld.'&aid='.$aid.'"><button class="btn btn-danger">Delete Apartment</button></a>
                     </td>
                     </tr>';
                     
