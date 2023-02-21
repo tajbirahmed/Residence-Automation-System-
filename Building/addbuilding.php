@@ -1,4 +1,5 @@
 <?php
+session_start();
 include_once('../connect.php'); 
     if (isset($_GET['id'])) {
         $email = $_GET['id']; 
@@ -55,7 +56,10 @@ include_once('../connect.php');
     <title>INSERT</title>
     </head>
     <body>
-    <div class="container">
+        <?php 
+             require_once('../home/_nav_from_show_building_info.php');
+        ?>
+    <div class="container my-5">
         <form method="post" enctype="multipart/form-data">
             <div class="form-group">
                 <label>Holding Number</label>
