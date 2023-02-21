@@ -39,6 +39,13 @@ session_start();
                     <th scope="col">Phone </th>
                     <th scope="col">Email</th>
                     <th scope="col">Image </th>
+                    <?php 
+                        if (isset($_SESSION['email']) && isset($_SESSION['type'])) {
+                            if ($_SESSION['type'] == 'admin') {
+                                echo '<th scope="col">Action</th>';
+                            }
+                        }
+                    ?>
                 </tr>
         </thead>
         <tbody>
@@ -61,8 +68,17 @@ session_start();
                             <td>' . $lname . '</td>
                             <td>' . $phn . '</td>
                             <td>' . $email . '</td>
-                            <td> <img src="images/'.$img.'" alt="slow connection" width="100px"></td>
-                            </tr>';
+                            <td> <img src="images/'.$img.'" alt="slow connection" width="100px"></td>';
+                            
+                            
+                            if (isset($_SESSION['email']) && isset($_SESSION['type'])) {
+                                if ($_SESSION['type'] == 'admin') {
+                                     echo '<td><a href="delete_owner.php?hld='.$id.'&email='.$email.'"><button class="btn btn-danger">Delete Owner</button></a></td>';
+                                }
+                            }
+            
+                            
+                            echo '</tr>';
                             
                         }
                     }
