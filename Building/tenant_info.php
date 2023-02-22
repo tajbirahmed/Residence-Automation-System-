@@ -63,7 +63,7 @@ include_once('../connect.php');
     <img class="card-img-top" src="../images/<?php  echo $img; ?>" style="height:300px;"alt="Slow internet">
     <img class="card-img-top" src="../images/<?php  echo $nid_image; ?>" alt="Slow internet">  
       <div class="card-body">
-            <p style="font-size: 20px">Name: <?php echo $fname;  echo $lname; ?></p>
+            <p style="font-size: 20px">Name: <?php echo $fname;  echo ' '; echo $lname; ?></p>
             <p style="font-size: 15px">Phone: <?php echo $phone ?></p>
             <p style="font-size: 15px">Email: <?php echo $email ?></p>
             <p style="font-size: 15px">NID: <?php echo $nid ?></p>
@@ -74,6 +74,13 @@ include_once('../connect.php');
         <form method="post">
             <button class="btn btn-danger" name="delete">Delete Tenant</button>
         </form>
+        <?php 
+
+            if (isset($_SESSION['email']) && isset($_SESSION['type'])) 
+                if ($_SESSION['type'] == 'owner') 
+                    echo '<a href="../tenant/tenant_profile.php?aid='.$aid.'"><button class="btn btn-success my-2">Edit Information</button>';
+        
+        ?>    
     </div>
   </body>
 </html>
