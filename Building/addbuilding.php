@@ -5,10 +5,19 @@ include_once('../connect.php');
         $email = $_GET['id']; 
         if (!empty($email)) {
             if (isset($_POST['submit'])) {
-                if (isset($_POST['hld']) && isset($_POST['bname'])) {
+                if (isset($_POST['hld']) && isset($_POST['bname']) && isset($_POST['city']) 
+                && isset($_POST['thana'])&& isset($_POST['area'])&& isset($_POST['street']) 
+                && isset($_POST['hno'])) { 
                     $hld = $_POST['hld']; 
-                    $bname = $_POST['bname']; 
-                    if (!empty($hld) && !empty($bname)) {
+                    $bname = $_POST['bname'];
+                    $city =  $_POST['city']; 
+                    $thana = $_POST['thana']; 
+                    $area = $_POST['area']; 
+                    $street = $_POST['street']; 
+                    $hno = $_POST['hno'];
+                    if (!empty($hld) && !empty($bname) && !empty($city) && 
+                        !empty($thana) && !empty($area) && !empty($street) && 
+                        !empty($hno)) {
                         $image = $_FILES['image'];
                     
                         $filename = explode('.', $image['name']); 
@@ -25,15 +34,30 @@ include_once('../connect.php');
                             $upload_image = 'building/' . $hld . '.' . $filename[1];
                             $sql = "INSERT into building (`holdingNumber`, `buildingName`, `image`) 
                                                     values ('$hld', '$bname', '$upload_image')"; 
-                            mysqli_query($con, $sql);
+                            $result1 = mysqli_query($con, $sql);
                             
-                           
-                            $sql = "INSERT into own (`email`, `holdingNumber`) values ('$email', '$hld')"; 
+                           if ($result1) {
+                                $sql = "INSERT into own (`email`, `holdingNumber`) values ('$email', '$hld')"; 
                             
-                            mysqli_query($con, $sql);
+                                $result2 = mysqli_query($con, $sql);
+                                if ($result2) {
+                                    $sql = "INSERT into location (`holdingNumber`, `city`, `thana`, `area`, `street`, `houseno`) 
+                                                        values('$hld', '$city', '$thana', '$area', '$street', '$hno')";
                             
-                            
-                            header('location:../ownerInterface.php');
+                                    $result3 = mysqli_query($con, $sql);
+                                    if ($result3) {
+                                        header('location:../ownerInterface.php');
+                                        // success 
+                                    } else {
+                                        // failure-at-level-3
+                                    }
+                                } else {
+                                    // failure - at-level-2
+                                }
+                           }
+
+                        } else {
+                            // failure-at-level-1
                         }
                     }
                 }
@@ -72,6 +96,28 @@ include_once('../connect.php');
             <div class="form-group">
                 <label for="exampleInputPassword1">Image</label> <br>
                 <input type="file" accept=".jpg,.jpeg,.png" name="image" id="fileToUpload">
+            </div>
+
+            <div class="form-group">
+                <label>City</label>
+                <input type="text" name="city" class="form-control" placeholder="Enter City*">
+            </div>
+            <div class="form-group">
+                <label>Thana</label>
+                <input type="text" name="thana" class="form-control" placeholder="Enter Thana*">
+            </div>
+            <div class="form-group">
+                <label>Area</label>
+                <input type="text" name="area" class="form-control" placeholder="Enter Area**">
+            </div>
+            <div class="form-group">
+                <label>Street No.</label>
+                <input type="text" name="street" class="form-control" placeholder="Enter Street No.**">
+            </div>
+            
+            <div class="form-group">
+                <label>House No.</label>
+                <input type="text" name="hno" class="form-control" placeholder="Enter House No.**">
             </div>
             <button type="submit" name="submit" class="btn btn-primary">Submit</button>
         </form>
