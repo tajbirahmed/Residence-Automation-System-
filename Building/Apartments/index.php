@@ -68,122 +68,188 @@ session_start();
     </head>
     <body>
         <?php require_once('../../home/_nav_from_aparmtent_view.php'); ?>
+        <>
         <div class="container my-5">
-        <form method="post" action="index.php">
-            <div class="form-group">
-                <label for="exampleInputEmail1">Rent</label>
-                <input type="number" name = "min" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder = "min"style="width: 100px">
-                <input type="number" name = "max" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder = "max"style="width: 100px">
-            </div>
+            <form method="post">
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Rent</label>
+                    <input type="number" name = "min" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder = "min"style="width: 100px">
+                    <input type="number" name = "max" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder = "max"style="width: 100px">
+                </div>
             
-            <div class="form-group">
-                <label for="exampleInputPassword1">Size</label>
-                <input name = "size" type="number" class="form-control" id="exampleInputPassword1" placeholder="BHK" style="width: 100px">
-            </div>
-            <label for="exampleInputPassword1">Location</label>
-            <div class="form-group" style="width: 300px;">
-                <label for="user">Choose Your City:</label>
-                                    <?php
-                                        include_once('../../connect.php'); 
-                                        $sql1 = "select distinct city from location"; 
-                                        $result1 = mysqli_query($con, $sql1); 
-                                    ?>
-                                <select name="city" id="" style="width: 400px;"> 
-                                    <?php
-                                        while ($row1 = mysqli_fetch_assoc($result1)) {
-                                            $city = $row1['city']; 
-                                            echo '<option value="'.$city.'">'.$city.'</option>';
-                                        }
-                                    ?>
+                <div class="form-group">
+                    <label for="exampleInputPassword1">Size</label>
+                    <input name = "size" type="number" class="form-control" id="exampleInputPassword1" placeholder="BHK" style="width: 100px">
+                </div>
+                    <label for="exampleInputPassword1">Location</label>
+                <div class="form-group" style="width: 300px;">
+                    <label for="user">Choose Your City:</label>
+                        <?php
+                            include_once('../../connect.php'); 
+                            $sql1 = "select distinct city from location"; 
+                            $result1 = mysqli_query($con, $sql1); 
+                        ?>
+                        <select name="city" id="" style="width: 400px;"> 
+                            <?php
+                                while ($row1 = mysqli_fetch_assoc($result1)) {
+                                    $city = $row1['city']; 
+                                    echo '<option value="'.$city.'">'.$city.'</option>';
+                                }
+                            ?>
 
-                                </select>
-            </div>
-            <div class="form-group" style="width: 300px;">
-                <label for="user">Choose Your Area:</label>
-                                    <?php
-                                        include_once('../../connect.php'); 
-                                        $sql1 = "select distinct area from location"; 
-                                        $result1 = mysqli_query($con, $sql1); 
-                                    ?>
-                                <select name="area" id="" style="width: 400px;"> 
-                                    <?php
-                                        while ($row1 = mysqli_fetch_assoc($result1)) {
-                                            $city = $row1['area']; 
-                                            echo '<option value="'.$city.'">'.$city.'</option>';
-                                        }
-                                    ?>
+                        </select>
+                </div>
+            
+                <div class="form-group" style="width: 300px;">
+                    <label for="user">Choose Your Thana:</label>
+                        <?php
+                            include_once('../../connect.php'); 
+                            $sql1 = "select distinct thana from location"; 
+                            $result1 = mysqli_query($con, $sql1); 
+                        ?>
+                        <select name="thana" id="" style="width: 400px;"> 
+                            <?php
+                                while ($row1 = mysqli_fetch_assoc($result1)) {
+                                    $city = $row1['thana']; 
+                                    echo '<option value="'.$city.'">'.$city.'</option>';
+                                }
+                            ?>
 
-                                </select>
-            </div>
-            <div class="form-group" style="width: 300px;">
-                <label for="user">Choose Your Thana:</label>
-                                    <?php
-                                        include_once('../../connect.php'); 
-                                        $sql1 = "select distinct thana from location"; 
-                                        $result1 = mysqli_query($con, $sql1); 
-                                    ?>
-                                <select name="thana" id="" style="width: 400px;"> 
-                                    <?php
-                                        while ($row1 = mysqli_fetch_assoc($result1)) {
-                                            $city = $row1['thana']; 
-                                            echo '<option value="'.$city.'">'.$city.'</option>';
-                                        }
-                                    ?>
+                        </select>
+                </div>        
+                <div class="form-group" style="width: 300px;">
+                    <label for="user">Choose Your Area:</label>
+                        <?php
+                            include_once('../../connect.php'); 
+                            $sql1 = "select distinct area from location"; 
+                            $result1 = mysqli_query($con, $sql1); 
+                        ?>
+                        <select name="area" id="" style="width: 400px;"> 
+                            <?php
+                                while ($row1 = mysqli_fetch_assoc($result1)) {
+                                    $city = $row1['area']; 
+                                    echo '<option value="'.$city.'">'.$city.'</option>';
+                                }
+                            ?>
 
-                                </select>
-            </div>        
-
+                        </select>
+                </div>
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
         </div>
-        <div class="container my-6">
-                <table class="table" >
-        <thead>
-            <tr>
-                <th scope="col" style="text-align: center;">Building Name</th>
-                <th scope="col" style="text-align: center;">Holding Number</th>
-                <th scope="col" style="text-align: center;">Apartment ID</th>
-                <th scope="col" style="text-align: center;">Rent per Month</th>
-                <th scope="col" style="text-align: center;">Size</th>
-                <th scope="col" style="text-align: center;">BHK</th>
-                <th scope="col" style="text-align: center;">Location</th>
-                <th scope="col" style="text-align: center;">Action</th>
-                
-            </tr>
-            </thead>
-            <tbody>
-                <?php 
-                while ($row = mysqli_fetch_assoc($requltLO)) {
-                    $name = $row['buildingName']; 
-                    $hld = $row['holdingNumber']; 
-                    $aid = $row['ApartmentID']; 
-                    $rpm = $row['rentpermonth']; 
-                    $size = $row['size'];
-                    $bhk = $row['BHK'];  
-                    $location = $row['area'] . ', ' . $row['thana'] . ', ' . $row['city']; 
-                    echo '<tr>
-                        <td style="text-align: center;">'.$name.'</td>
-                        
-                        <td style="text-align: center;">'.$hld.'</td>
-                        
-                        <td style="text-align: center;">'.$aid.'</td>
-                        
-                        <td style="text-align: center;">'.$rpm.'</td>
-                        
-                        <td style="text-align: center;">'.$size.'</td>
-                        
-                        <td style="text-align: center;">'.$bhk.'</td>
-                        
-                        <td style="text-align: center;">'.$location.'</td>
+        <div class="container my-2">
+            <h1 style="text-align: center;"> Apartments That Are Currently Empty</h1>
+            <table class="table" >
+                <thead>
+                    <tr>
+                        <th scope="col" style="text-align: center;">Building Name</th>
+                        <th scope="col" style="text-align: center;">Holding Number</th>
+                        <th scope="col" style="text-align: center;">Apartment ID</th>
+                        <th scope="col" style="text-align: center;">Rent per Month</th>
+                        <th scope="col" style="text-align: center;">Size</th>
+                        <th scope="col" style="text-align: center;">BHK</th>
+                        <th scope="col" style="text-align: center;">Location</th>
+                        <th scope="col" style="text-align: center;">Action</th>
+            
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php 
+                        while ($row = mysqli_fetch_assoc($requltLO)) {
+                            $name = $row['buildingName']; 
+                            $hld = $row['holdingNumber']; 
+                            $aid = $row['ApartmentID']; 
+                            $rpm = $row['rentpermonth']; 
+                            $size = $row['size'];
+                            $bhk = $row['BHK'];  
+                            $location = $row['area'] . ', ' . $row['thana'] . ', ' . $row['city']; 
+                            echo '<tr>
+                                <td style="text-align: center;">'.$name.'</td>
+                                
+                                <td style="text-align: center;">'.$hld.'</td>
+                                
+                                <td style="text-align: center;">'.$aid.'</td>
+                                
+                                <td style="text-align: center;">'.$rpm.'</td>
+                                
+                                <td style="text-align: center;">'.$size.'</td>
+                                
+                                <td style="text-align: center;">'.$bhk.'</td>
+                                
+                                <td style="text-align: center;">'.$location.'</td>
 
-                        <td style="text-align: center;"><a href="#"><button class="btn btn-success">Apply</button></a></td>
-                        
-                    </tr>';
-                }
-                ?>
+                                <td style="text-align: center;"><a href="#"><button class="btn btn-success">Apply</button></a></td>
+                                
+                            </tr>';
+                        }
+                    ?>
                 </tbody>
-         </table>
+            </table>
         </div>
-            </body>
+        <div class="container my-2">
+                <h1 style="text-align: center;"> Apartments That Will be Available in Future</h1>
+                <table class="table">
+                    <thead>
+                        <tr>
+                        <th scope="col" style="text-align: center;">Building Name</th>
+                            <th scope="col" style="text-align: center;">Holding Number</th>
+                            <th scope="col" style="text-align: center;">Apartment ID</th>
+                            <th scope="col" style="text-align: center;">Rent per Month</th>
+                            <th scope="col" style="text-align: center;">Size</th>
+                            <th scope="col" style="text-align: center;">BHK</th>
+                            <th scope="col" style="text-align: center;">Location</th>
+                            <th scope="col" style="text-align: center;">Available From</th>
+                            <th scope="col" style="text-align: center;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php 
+                            
+                            $sqlx = "SELECT * FROM apartment 
+                                            NATURAL JOIN location 
+                                            NATURAL JOIN building 
+                                            where availability=0  and 
+                                            rentpermonth between $min and $max and 
+                                            ($size = -1 or BHK = $size) and 
+                                            ('$city' = '-'  or city = '$city') and 
+                                            ('$area' = '-'  or area = '$area') and 
+                                            ('$thana' = '-'  or thana = '$thana')";
+                            $resultx = mysqli_query($con, $sqlx); 
+                            while ($row = mysqli_fetch_assoc($resultx)) {
+                            $name = $row['buildingName']; 
+                            $hld = $row['holdingNumber']; 
+                            $aid = $row['ApartmentID']; 
+                            $rpm = $row['rentpermonth']; 
+                            $size = $row['size'];
+                            $bhk = $row['BHK'];
+                            $avl =  $row['available_from'];
+                            $location = $row['area'] . ', ' . $row['thana'] . ', ' . $row['city']; 
+                            echo '<tr>
+                                <td style="text-align: center;">'.$name.'</td>
+                                
+                                <td style="text-align: center;">'.$hld.'</td>
+                                
+                                <td style="text-align: center;">'.$aid.'</td>
+                                
+                                <td style="text-align: center;">'.$rpm.'</td>
+                                
+                                <td style="text-align: center;">'.$size.'</td>
+                                
+                                <td style="text-align: center;">'.$bhk.'</td>
+                                
+                                <td style="text-align: center;">'.$location.'</td>
+                            
+                                <td style="text-align: center;">'.$avl.'</td>
+
+                                <td style="text-align: center;"><a href="#"><button class="btn btn-success">Apply</button></a></td>
+                                
+                                </tr>';
+                            }
+                        ?>
+            
+                 </tbody>
+            </table>
+        </div>
+    </body>
     
 </html>
