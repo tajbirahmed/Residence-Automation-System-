@@ -31,7 +31,9 @@
               echo '<li class="nav-item active">
               <a class="nav-link" href="owner/owner_profile.php">Account Details</a>
               </li>';
-
+              echo '<li class="nav-item active">
+                            <a class="nav-link" href="payment/payment_statement.php">Rent Statments</a>
+                            </li>';
         }
         ?>
     </ul>
