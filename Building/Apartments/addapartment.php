@@ -21,6 +21,23 @@ session_start();
                                 VALUES ('$aid', '$hld' ,'$rpm', '$size', '$bhk', 1)";
 
                         mysqli_query($con, $sql);
+
+                        $sql = "INSERT INTO `payment_history` (`ApartmentID`, `rent_of`) 
+                                            values('$aid', '2023-01')";
+                        mysqli_query($con, $sql);
+
+                        $sql = "INSERT INTO `payment_history` (`ApartmentID`, `rent_of`) 
+                                            values('$aid', '2023-02')";
+                        mysqli_query($con, $sql);
+
+                        $sql = "INSERT INTO `payment_history` (`ApartmentID`, `rent_of`) 
+                                            values('$aid', '2023-03')";
+                        mysqli_query($con, $sql);
+
+                        $sql = "INSERT INTO `payment_history` (`ApartmentID`, `rent_of`) 
+                                            values('$aid', '2023-04')";
+                        mysqli_query($con, $sql);
+                        
                         header('Location: ../../owner/showBuildinginfo.php?showHolding='.$hld.'');
                     }
                 }
