@@ -22,7 +22,7 @@ session_start();
                         if ($password == $row['password']) {
                             
 
-                            $sql = "DELETE `apartment` where ApartmentID='$aid'"; 
+                            $sql = "DELETE from `apartment` where ApartmentID='$aid'"; 
                             $result = mysqli_query($con, $sql);
 
                             if ($result) {
