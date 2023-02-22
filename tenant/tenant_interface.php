@@ -35,6 +35,8 @@
                     <th scope="col">Holding Number of Building</th>
                     <th scope="col">Apartment ID</th>
                     <th scope="col">Date You Arrived.</th>
+                    <th scope="col">Due Date</th>
+                    <th scope="col">Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -44,6 +46,21 @@
                         <td><?php $temp = $row['ApartmentID']; echo $temp; ?></td>
                         
                         <td><?php $temp = $row1['registerddate']; echo $temp; ?></td>
+                        <?php 
+                            $due_date = date('Y-m-10');
+                            $temp_aid = explode('@', $userid); 
+                            $aid = $temp_aid[0];
+                            $month = date('Y-m');
+                            $sql = "SELECT verify from payment_history where ApartmentID = '$aid' and rent_of = '$month'";
+                            $result = mysqli_query($con, $sql); 
+                            if ($result) {
+                                $row = mysqli_fetch_assoc($result); 
+                                $verify  = $row['verify']; 
+                            }
+                        ?>
+
+                        <td> <?php if ($verify != null) echo $verify; else echo $due_date; ?></td>
+                        <td><a href="../payment/tenant_payment.php"><button class="btn btn-primary">Pay Rent</button></a></td>
                     </tr>
                 </tbody>
             </table>
