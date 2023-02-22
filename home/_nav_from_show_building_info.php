@@ -26,8 +26,9 @@
             <a class="nav-link" href="../ProfileSystem/logout.php">Logout</a>
           </li>';
           if ($_SESSION['type'] == 'tenant'){ 
+            $aid = explode('@', $_SESSION['email']); 
               echo '<li class="nav-item active">
-              <a class="nav-link" href="../tenant/tenant_profile.php">My Profile</a>
+              <a class="nav-link" href="../tenant/tenant_profile.php?aid='.$aid[0].'">My Profile</a>
               </li>';
 
           }
@@ -35,7 +36,9 @@
             echo '<li class="nav-item active">
             <a class="nav-link" href="../ownerInterface.php">My Buildings</a>
             </li>';
-
+            echo '<li class="nav-item active">
+                            <a class="nav-link" href="../payment/payment_statement.php">Rent Statments</a>
+                            </li>';
         }
         }
           ?>
