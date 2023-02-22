@@ -27,8 +27,14 @@
                   <li class="nav-item">'; 
                 }
               else if ($_SESSION['type'] == 'tenant') {
+                $email = $_SESSION['email']; 
+                  $aid = explode('@', $email);
                 echo '<li class="nav-item active">
-                  <a class="nav-link" href="tenant/tenant_profile.php">My Profile<span class="sr-only">(current)</span></a>
+                  <a class="nav-link" href="tenant/tenant_profile.php?aid='.$aid[0].'">My Profile<span class="sr-only">(current)</span></a>
+                  </li>
+                  <li class="nav-item">';
+                  echo '<li class="nav-item active">
+                  <a class="nav-link" href="tenant/tenant_interface.php?id='.$email.'">My Apartment<span class="sr-only">(current)</span></a>
                   </li>
                   <li class="nav-item">';
               }
@@ -43,13 +49,12 @@
                       echo '<li class="nav-item active">
                             <a class="nav-link" href="owner/owner_profile.php">Account Details</a>
                             </li>';
-                    }
-                    if ($_SESSION['type'] == 'tenant') {
-                      echo '<li class="nav-item active">
-                            <a class="nav-link" href="tenant/tenant_profile.php">Account Details</a>
+                            echo '<li class="nav-item active">
+                            <a class="nav-link" href="payment/payment_statement.php">Rent Statments</a>
                             </li>';
+                            
                     }
-                }
+                  }
             ?>
       
     </ul>
