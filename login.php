@@ -94,11 +94,10 @@
                             <div class="form-outline mb-4">
                                 <label for="user">Choose Your Type:</label>
                                 <select name="type" id="" class="form-control"> 
-                                    <option value="node" selected disabled hidden> Choose You Account</option>
+                                    <option value="node" selected disabled hidden> Choose You Account Type</option>
                                     <option value="admin"> Admin</option>
                                     <option value="owner"> Owner</option>
                                     <option value="tenant"> Tenant</option>
-                                    <option value="manager"> Manager</option>
                                 </select>
                             </div> 
                             <div class="d-flex justify-content-around align-items-center mb-4">
