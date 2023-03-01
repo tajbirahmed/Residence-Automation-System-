@@ -1,7 +1,8 @@
 <?php
-session_start(); 
+    session_start(); 
     include_once('../connect.php');
-
+    $email_does_not_exist = false;
+    $pass_incorrect = false;
     if (isset($_POST['submit']) && isset($_POST['email']) && 
         isset($_POST['pass']) && isset($_POST['type'])) {
 
@@ -12,8 +13,8 @@ session_start();
         $sql = "select * from `user` where username='$email' limit 1";
 
         $result = mysqli_query($con, $sql);
-
-        if ($result) {
+        
+        if (mysqli_num_rows($result)) {
             $row = mysqli_fetch_assoc($result);
             if ($row) {
                 if ($row['username'] == $email && $row['password'] == $pass && $type == $row['type']) {
@@ -28,11 +29,13 @@ session_start();
                         header('Location: ../tenant/tenant_interface.php?id='.$email.'');
                     }
                 } else {
-                    echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <strong>Wrong Username or Password</strong>
-                    </div>';
+                    // pass wrong
+                    $pass_incorrect = true;
                 }
             }
+        } else {
+            // email not do not exist
+            $email_does_not_exist = true;
         }
 
     } 
@@ -53,13 +56,23 @@ session_start();
     <body>
         <?php 
             require_once('../home/login_nav.php'); 
+            if ($email_does_not_exist) {
+                echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>Email Does not Exist. </strong> Please sign up first or check your email.
+                    </div>';
+            } 
+            if ($pass_incorrect) {
+                echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>Wrong Password</strong>
+                    </div>';
+            }
         ?>
         <section class="vh-100">
             <div class="container py-5 h-100">
                 <div class="row d-flex align-items-center justify-content-center h-100">
                     <div class="col-md-8 col-lg-7 col-xl-6">
-                        <img src="images.jpg"
-                        class="img-fluid" alt="Phone image">
+                        <img src="../images/logo.png"
+                        class="img-fluid" alt="Phone image" style="width: 350px; height: 350px;">
                         </div>
                         <div class="col-md-7 col-lg-5 col-xl-5 offset-xl-1">
                         <form method="post">
@@ -80,11 +93,11 @@ session_start();
                             <!-- CheckBox --->
                             <div class="form-outline mb-4">
                                 <label for="user">Choose Your Type:</label>
-                                <select name="type" id=""> 
+                                <select name="type" id="" class="form-control"> 
+                                    <option value="node" selected disabled hidden> Choose You Account Type</option>
                                     <option value="admin"> Admin</option>
                                     <option value="owner"> Owner</option>
                                     <option value="tenant"> Tenant</option>
-                                    <option value="manager"> Manager</option>
                                 </select>
                             </div> 
                             <div class="d-flex justify-content-around align-items-center mb-4">
