@@ -15,14 +15,17 @@ include_once('../connect.php');
                     $area = $_POST['area']; 
                     $street = $_POST['street']; 
                     $hno = $_POST['hno'];
+                    $block = $_POST['block']; 
+                    $map_loc = $_POST['mloc'];
                     if (!empty($hld) && !empty($bname) && !empty($city) && 
-                        !empty($thana) && !empty($area) && !empty($street) && 
-                        !empty($hno)) {
+                        !empty($thana) && !empty($area) && !empty($map_loc)) {
                         $image = $_FILES['image'];
                     
                         $filename = explode('.', $image['name']); 
                         $extensions = array('jpeg', 'jpg', 'png');
+
                         if (in_array(strtolower($filename[1]), $extensions)) {
+
                             $upload_image = '../images/building/'. $hld . '.' . $filename[1];
                             move_uploaded_file($image['tmp_name'], $upload_image);
 
@@ -41,8 +44,8 @@ include_once('../connect.php');
                             
                                 $result2 = mysqli_query($con, $sql);
                                 if ($result2) {
-                                    $sql = "INSERT into location (`holdingNumber`, `city`, `thana`, `area`, `street`, `houseno`) 
-                                                        values('$hld', '$city', '$thana', '$area', '$street', '$hno')";
+                                    $sql = "INSERT into location (`holdingNumber`, `city`, `thana`, `area`, `street`, `houseno`, `block`, `google_map_location`) 
+                                                        values('$hld', '$city', '$thana', '$area', '$street', '$hno', '$block', '$map_loc')";
                             
                                     $result3 = mysqli_query($con, $sql);
                                     if ($result3) {
@@ -87,37 +90,45 @@ include_once('../connect.php');
         <form method="post" enctype="multipart/form-data">
             <div class="form-group">
                 <label>Holding Number</label>
-                <input type="number" name="hld" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Holding">
+                <input type="number" name="hld" class="form-control" required placeholder="Enter Holding">
             </div>
             <div class="form-group">
                 <label>Building Name</label>
-                <input type="text" name="bname" class="form-control" id="exampleInputPassword1" placeholder="Enter Building Name">
+                <input type="text" name="bname" class="form-control" required placeholder="Enter Building Name">
             </div>
             <div class="form-group">
                 <label for="exampleInputPassword1">Image</label> <br>
-                <input type="file" accept=".jpg,.jpeg,.png" name="image" id="fileToUpload">
+                <input type="file" accept=".jpg,.jpeg,.png" name="image" required>
             </div>
 
             <div class="form-group">
                 <label>City</label>
-                <input type="text" name="city" class="form-control" placeholder="Enter City*">
+                <input type="text" name="city" class="form-control" required placeholder="Enter City*">
             </div>
             <div class="form-group">
                 <label>Thana</label>
-                <input type="text" name="thana" class="form-control" placeholder="Enter Thana*">
+                <input type="text" name="thana" class="form-control" required placeholder="Enter Thana*">
             </div>
             <div class="form-group">
                 <label>Area</label>
-                <input type="text" name="area" class="form-control" placeholder="Enter Area**">
+                <input type="text" name="area" class="form-control" required placeholder="Enter Area*">
+            </div>
+            <div class="form-group">
+                <label>Block</label>
+                <input type="text" name="block" class="form-control" placeholder="Enter Block No.">
             </div>
             <div class="form-group">
                 <label>Street No.</label>
-                <input type="text" name="street" class="form-control" placeholder="Enter Street No.**">
+                <input type="text" name="street" class="form-control" placeholder="Enter Street No.">
             </div>
             
             <div class="form-group">
                 <label>House No.</label>
-                <input type="text" name="hno" class="form-control" placeholder="Enter House No.**">
+                <input type="text" name="hno" class="form-control" placeholder="Enter House No.">
+            </div>
+            <div class="form-group">
+                <label>Google Map Link</label>
+                <input type="text" name="mloc" class="form-control" placeholder="Goto google map search you building and paste the location link here">
             </div>
             <button type="submit" name="submit" class="btn btn-primary">Submit</button>
         </form>
