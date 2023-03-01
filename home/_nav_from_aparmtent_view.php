@@ -7,7 +7,7 @@
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
     <?php  
-            if (!isset($_SESSION['email']) && !isset($_SESSION['type'])) {
+            if (!isset($_SESSION['email'])) {
               
               echo '<li class="nav-item active">
         <a class="nav-link" href="../../ProfileSystem/login.php">Login <span class="sr-only">(current)</span></a>
@@ -20,7 +20,7 @@
       <?php
       
                if (isset($_SESSION['email']) && isset($_SESSION['type'])) {
-                 echo '<li class="nav-item">
+                 echo '<li class="nav-item active">
                   <a class="nav-link" href="../../ProfileSystem/logout.php">Logout</a>
                 </li>';
                }
