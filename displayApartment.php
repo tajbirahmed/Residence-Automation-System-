@@ -34,11 +34,11 @@ session_start();
                     <th colspan="5" style="text-align:center">Owner</th>
                 </tr>
                 <tr>
-                    <th scope="col">First Name</th>
-                    <th scope="col">Last Name </th>
-                    <th scope="col">Phone </th>
-                    <th scope="col">Email</th>
-                    <th scope="col">Image </th>
+                    <th scope="col"  style="text-align: center;">First Name</th>
+                    <th scope="col"  style="text-align: center;">Last Name </th>
+                    <th scope="col"  style="text-align: center;">Phone </th>
+                    <th scope="col"  style="text-align: center;">Email</th>
+                    <th scope="col"  style="text-align: center;">Image </th>
                     <?php 
                         if (isset($_SESSION['email']) && isset($_SESSION['type'])) {
                             if ($_SESSION['type'] == 'admin') {
@@ -64,11 +64,11 @@ session_start();
                             $img = $row['image'];
                             
                             echo '<tr>
-                            <td>' . $fname . '</td>
-                            <td>' . $lname . '</td>
-                            <td>' . $phn . '</td>
-                            <td>' . $email . '</td>
-                            <td> <img src="images/'.$img.'" alt="slow connection" width="100px"></td>';
+                            <td style="text-align: center;">' . $fname . '</td>
+                            <td style="text-align: center;">' . $lname . '</td>
+                            <td style="text-align: center;">' . $phn . '</td>
+                            <td style="text-align: center;">' . $email . '</td>
+                            <td style="text-align: center;"> <img src="images/'.$img.'" alt="slow connection" width="100px"></td>';
                             
                             
                             if (isset($_SESSION['email']) && isset($_SESSION['type'])) {
@@ -92,14 +92,16 @@ session_start();
     <table class="table">
         <thead> 
                 <tr>  
-                    <th colspan="5" style="text-align:center">Location</th>
+                    <th colspan="7  style="text-align: center;"" style="text-align:center">Location</th>
                 </tr>
                 <tr>
-                    <th scope="col">City</th>
-                    <th scope="col">Thana </th>
-                    <th scope="col">Area</th>
-                    <th scope="col">Street No.</th>
-                    <th scope="col">House No.</th>
+                    <th scope="col" style="text-align: center;">City</th>
+                    <th scope="col" style="text-align: center;">Thana </th>
+                    <th scope="col" style="text-align: center;">Area</th>
+                    <th scope="col" style="text-align: center;">Block</th>
+                    <th scope="col" style="text-align: center;">Street No.</th>
+                    <th scope="col" style="text-align: center;">House No.</th>
+                    <th scope="col" style="text-align: center;">Google Map</th>
                 </tr>
         </thead>
         <tbody>
@@ -114,14 +116,19 @@ session_start();
                             $city = $row['city'];
                         $thana = $row['thana'];
                         $area = $row['area'];
+                        $block = $row['block'];
                         $strt = $row['street'];
                         $house = $row['houseNo'];
+                        $gmap = $row['google_map_location'];
                             echo ' 
-                            <td>'.$city.'</td>
-                            <td>'.$thana.'</div></td>
-                            <td>'.$area.'</div></td>
-                            <td>'.$strt.'</div></td>
-                            <td>'.$house.'</div></td>
+                            <td style="text-align: center;">'.$city.'</td>
+                            <td style="text-align: center;">'.$thana.'</div></td>
+                            <td style="text-align: center;">'.$area.'</div></td>
+                            <td style="text-align: center;">'.$block.'</div></td>
+                            <td style="text-align: center;">'.$strt.'</div></td>
+                            <td style="text-align: center;">'.$house.'</div></td>
+                            <td style="text-align: center;"><a href="'.$gmap.'"><button class="btn btn-primary">Map</button></a></td>
+
                             </tr>';
                     }
                 }
@@ -170,13 +177,14 @@ session_start();
                                 <td style="text-align: center;">'.$size.'</td>
                                 <td style="text-align: center;">'.$rpdn.'</td>
                                 <td style="text-align: center;">'.$avl.'</td>
-                                <td style="text-align: center;"><a href="Building/Apartments/view_apartment.php">
+                                <td style="text-align: center;"><a href="Building/Apartments/view_apartment.php?aid='.$aID.'">
                                     <button class="btn btn-primary">View</button></a></td>';
                         // Changed the condition that an owner/ tenant can't apply to any 
                         // available building.
                         // ~~Not verified~~
                         if ($row['availability'] && !isset($_SESSION['email'])) {
-                            echo '<td style="text-align: center;"><a href="#">
+                            echo '<td style="text-align: center;">
+                            <a href="Building/Apartments/apply_request.php?aid='.$aID.'" target"_blank">
                                 <button class="btn btn-success">Apply</button></a></td>';
                         } else 
                             echo '<td></td>';
