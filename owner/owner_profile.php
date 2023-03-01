@@ -1,119 +1,121 @@
+<?php
+session_start();
+    include_once('../connect.php');
+    if (isset($_SESSION['email'])) {
+        $email = $_SESSION['email'];
+        if (!empty($email)) {
+            $sql = "SELECT * from owner where email = '$email' limit 1";
+            $result = mysqli_query($con, $sql);
+
+            $sql1 = "SELECT * from user where username = '$email' limit 1";
+            $result1 = mysqli_query($con, $sql1);
+
+            $row = mysqli_fetch_assoc($result);
+            $row1 = mysqli_fetch_assoc($result1);
+
+            $fname = $row['first_name'];
+            $lname = $row['last_name'];
+            $phone = $row['phone'];
+            $image = $row['image'];
+
+            $pass = $row1['password'];
+
+
+        }
+    }
+    if (isset($_POST['submit'])) {
+        $ufname = $_POST['fname'];
+
+        $ulname = $_POST['lname'];
+        $uphone = $_POST['phone'];
+        $upass = $_POST['password'];
+        if (!empty($ufnmae) && !empty($ulname) && !empty($uphone) && !empty($upass)){
+            if ($fname != $ufname || $lname != $ulname ||
+                $phone != $uphone)  {
+
+                $sql = "UPDATE owner
+                            set first_name = '$ufname', last_name = '$ulname', phone = '$uphone'
+                            where email = '$email'";
+
+                mysqli_query($con, $sql);
+
+            }
+            if ($pass != $upass) {
+                $sql = "UPDATE user
+                            set password = '$upass'
+                            where username = '$email'";
+                mysqli_query($con, $sql);
+
+                unset($_SESSION['email']);
+                unset($_SESSION['type']);
+
+                session_destroy();
+
+                header('Location:../ProfileSystem/login.php');
+            }
+            if ($pass == $upass) {
+                header('Location:../ownerInterface.php');
+            }
+        } else {
+            // alert field empty
+        }
+    }
+
+
+?>
+
 <!doctype html>
 <html lang="en">
     <head>
-            <!-- Required meta tags -->
-            <meta charset="utf-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-            <!-- Bootstrap CSS -->
-            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css">
-            <title>BUILDING NAME</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <title><?php echo $fname; echo ' '; echo $lname; ?></title>
     </head>
-  <body>
-   
-
-<?php
-session_start();
-    require_once('../home/_nav_from_show_building_info.php');
-    include_once('../connect.php');
+    <body>
     
-    if (isset($_GET['showHolding'])) {
-        $hld = $_GET['showHolding']; 
-        $sql = "select * from `building` where holdingNumber=$hld";
-        $result = mysqli_query($con, $sql); 
-       
-        while ($row = mysqli_fetch_assoc($result)) {
-            $name = $row['buildingName']; 
-            $hld = $row['holdingNumber']; 
-            $img = $row['image']; 
-            echo '<div class="building-info" style="text-align: center;">
-                        <h1 class="building-name">'.$name.'</h1>
-                        <p class="holding-number">Holding Number: '.$hld.'</p>
+    <?php require_once('../home/_nav_from_show_building_info.php');?>
+    <div class="container my-4" style="width: 30%; ">
+            <form method="post" enctype="multipart/form-data">
 
-                </div>';
-             
-        }
-    }
-        
-        ?>
-         <div class="container my-5">
-              <table class="table">
-              
-                    <thead>
-                        <tr>  
-                            <th colspan="7" style="text-align:center; font-size: 30px">Apartments</th>
-                        </tr>
-                        <tr>
-                            <th scope="col" style="text-align: center">Apartment ID</th>
-                            <th scope="col" style="text-align: center">Size </th>
-                            <th scope="col" style="text-align: center">Rent per Month</th>
-                            <th scope="col" style="text-align: center">Status</th>
-                            <th scope="col" style="text-align: center">Rent Collection Date</th>
-                            <th scope="col" style="text-align: center">Rent Status</th>
-                            <th scope="col" style="text-align: center">Action</th>
-                            
-                        </tr>
-                    </thead>
-                     <tbody>
-        <?php
-            include_once('../connect.php');
-            include_once('../functions.php');
-            if (isset($hld)) {
-                $sql = "select * from apartment where holdingNumber=$hld";
-                $result = mysqli_query($con, $sql); 
-                
-                while ($row = mysqli_fetch_assoc($result)) {
-                    $aid = $row['ApartmentID']; 
-                    $rpdn = $row['rentpermonth']; 
-                    $size = $row['size']; 
-                    
-                    
-                    $sql1 = "SELECT registerddate from tenant where ApartmentID='$aid' limit 1";
-                    $result1 = mysqli_query($con, $sql1); 
-                    if (mysqli_num_rows($result1)){
-                        $row1 = mysqli_fetch_assoc($result1);
-                        $rcd = date_create($row1['registerddate']);
-                        date_add($rcd, date_interval_create_from_date_string("7 days"));
-                    } else {
-                        $rcd='empty';
-                    }
-                    $avl=$row['availability'] ? "Empty" : "Rented";
-                    if ($avl == "Empty") 
-                        $col = "red"; 
-                    else 
-                        $col = "green";
-                    $rcd = show_date($rcd);
-                    echo '  <tr>
-                    <td style="text-align: center;font-weight: bold;">'.$aid.'</td>
-                    <td style="text-align: center;">'.$size.'</td>
-                    <td style="text-align: center; ">'.$rpdn.'</td>
-                    <td style="text-align: center; color: '.$col.'; font-weight: bold; font-size: 19px">'.$avl.'</td>
-                    <td style="text-align: center;"> '.$rcd.' </td>
-                    <td style="text-align: center;"> </td>';
-                    
-                    echo '<td style="text-align: center;">'; 
-                    if (!$row['availability'])
-                        echo '<a href="../Building/tenant_info.php?aid='.$aid.'"><button class="btn btn-success">Details</button></a>';
-                    echo ' ';
-                    if ($row['availability'])
-                        echo '<a href="../Building/Apartments/tenant_update.php?aid='.$aid.'&hld='.$hld.'"><button class="btn btn-primary">Add Tenant</button></a>';
-                    echo ' ';
-                        echo '<a href="../Building/Apartments/delete_apartment.php?hld='.$hld.'&aid='.$aid.'"><button class="btn btn-danger">Delete Apartment</button></a>
-                    </td>
-                    </tr>';
-                    
-                    }
-                }
-        ?>
-                </tbody>
-            </table>
-            </div>
-            <div class="container">
-                <form method="post" action="../Building/Apartments/addapartment.php?id=<?php echo $hld ?>">
-                    <h3>Add Apartment to Building</h3>
-                    <button class="btn btn-success">Add Apartment</button>
-                    
-                </form>
-            </div>
-        </body>
+                <div class="form-group">
+                    <label for="fname">First Name</label>
+                    <input type="text" class="form-control" name="fname" value=<?php echo $fname?>>
+                </div>
+
+                <div class="form-group">
+                    <label for="lname">Last Name</label>
+                    <input type="text" class="form-control" name = "lname" value=<?php echo $lname?>>
+                </div>
+
+                <div class="form-group">
+                    <label for="lname">Phone</label>
+                    <input type="text" class="form-control" name="phone" value=<?php echo $phone?>>
+                </div>
+
+                <div class="form-group">
+                    <label for="lname">Email</label>
+                    <input type="email" class="form-control" readonly value=<?php echo $email?>>
+                </div>
+
+
+                <div class="form-group">
+                    <label for="lname">Image</label>
+                    <img src="../images/<?php echo $image?>" readonly style="width: 150px; height: 150px;">
+                </div>
+
+
+                <div class="form-group">
+                    <label for="lname">Password</label>
+                    <input type="text" class="form-control" name="password" value=<?php echo $pass?>>
+                </div>
+
+
+                <button type="submit" class="btn btn-dark" name="submit">Submit</button>
+            </form>
+
+        </div>
+    </body>
 </html>
