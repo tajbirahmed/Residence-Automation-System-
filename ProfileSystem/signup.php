@@ -1,7 +1,9 @@
 <?php
     include_once('../connect.php'); 
-    require_once('../home/nav_from_signup.php');
+    
     include_once('../functions.php');
+    $email_already_exists = 0;
+    $pass_error = 0;
     if (isset($_POST['signup'])) {
         if (isset($_POST['fname']) && isset($_POST['lname'] ) && 
         isset($_POST['phnno']) && isset($_POST['email']) && 
@@ -16,28 +18,33 @@
                     $phn = $_POST['phnno']; 
                     $password = $_POST['password'];
                     $image = $_FILES['image'];
+
+                    $sql = "SELECT username from `user` where username = '$email' limit 1"; 
+                    $result = mysqli_query($con, $sql); 
+                    if (mysqli_num_rows($result)) {
+                        $email_already_exists = 1;
+                    } else {
                     
-                    $filename = explode('.', $image['name']); 
-                    $extensions = array('jpeg', 'jpg', 'png');
-                    if (in_array(strtolower($filename[1]), $extensions)) {
-                        $upload_image = '../images/owner/'. $email . '.' . $filename[1];
-                        move_uploaded_file($image['tmp_name'], $upload_image); 
-                        
-                        $upload_image = 'owner/' . $email . '.' . $filename[1];
-                        $sql = "INSERT INTO `user` (`username`, `password`, `type`) VALUES ('$email', '$password', 'owner')";
-                        mysqli_query($con, $sql);
-                        
+                        $filename = explode('.', $image['name']); 
+                        $extensions = array('jpeg', 'jpg', 'png');
+                        if (in_array(strtolower($filename[1]), $extensions)) {
+                            $upload_image = '../images/owner/'. $email . '.' . $filename[1];
+                            move_uploaded_file($image['tmp_name'], $upload_image); 
+                            
+                            $upload_image = 'owner/' . $email . '.' . $filename[1];
+                            $sql = "INSERT INTO `user` (`username`, `password`, `type`) VALUES ('$email', '$password', 'owner')";
+                            mysqli_query($con, $sql);
+                            
 
-                        $sql = "INSERT INTO `owner` (`first_name`, `last_name`, `phone`, `email`, `image`) VALUES ('$fname', '$lname', '$phn', '$email', '$upload_image')";
-                        mysqli_query($con, $sql);
+                            $sql = "INSERT INTO `owner` (`first_name`, `last_name`, `phone`, `email`, `image`) VALUES ('$fname', '$lname', '$phn', '$email', '$upload_image')";
+                            mysqli_query($con, $sql);
 
 
-                        header('Location:login.php'); 
+                            header('Location:login.php'); 
+                        }
                     }
-                }
-
-                else {
-                    // pass not same;
+                } else {
+                    $pass_error = 1;
                 }
             }
         }
@@ -57,6 +64,26 @@
     <title>Sign In</title>
     </head>
     <body>
+        <?php 
+            require_once('../home/nav_from_signup.php');
+            if (isset($_POST['signup']) && $email_already_exists) {
+                echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <strong>Email Already exists</strong> You should check your email
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>';
+            }
+            if (isset($_POST['signup']) && $pass_error) {
+                echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <strong>Password not matched.</strong> try again.
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>';
+            }
+            
+        ?>
         <div class="container my-5" style = "width: 600px">
         <p style="font-size: 25px; text-align: center;">Sign Up as an owner</p> 
         <form method="post" enctype="multipart/form-data">
