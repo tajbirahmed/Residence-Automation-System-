@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 22, 2023 at 09:11 PM
+-- Generation Time: Mar 01, 2023 at 09:47 PM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 8.2.0
 
@@ -21,6 +21,35 @@ SET time_zone = "+00:00";
 -- Database: `ras`
 --
 
+DELIMITER $$
+--
+-- Procedures
+--
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_apartment` (IN `availability` INT)   SELECT * FROM `apartment` a WHERE a.availability = availability$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_apartment_with_location` (IN `cit` VARCHAR(100), IN `than` VARCHAR(100), IN `are` VARCHAR(100), IN `minimum` INT, IN `maximum` INT, IN `bh` INT, IN `floo` INT)   SELECT * 
+FROM apartment a 
+NATURAL JOIN location l 
+NATURAL JOIN building b
+WHERE a.availability = 1 AND 
+a.rentpermonth BETWEEN minimum AND maximum AND
+(bh = -1 || a.BHK = bh) AND
+(floo = -1 || a.floor = floo) AND 
+(than = 'none' || l.thana = than) AND 
+ (are = 'none' || l.area = are) AND 
+ (cit = 'none' || l.city = cit)$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_expense` (IN `month` VARCHAR(100), IN `holding` BIGINT)   SELECT *
+FROM expense
+where date LIKE 'month-%' and holdingNumber = holding$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_owners` (IN `holding` INT)   SELECT * 
+FROM owner
+NATURAL JOIN own
+WHERE holdingNumber = holding$$
+
+DELIMITER ;
+
 -- --------------------------------------------------------
 
 --
@@ -34,22 +63,27 @@ CREATE TABLE `apartment` (
   `size` double NOT NULL,
   `availability` tinyint(1) NOT NULL DEFAULT 1,
   `BHK` int(100) NOT NULL,
-  `available_from` date DEFAULT NULL
+  `video` varchar(200) NOT NULL,
+  `floor` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `apartment`
 --
 
-INSERT INTO `apartment` (`ApartmentID`, `holdingNumber`, `rentpermonth`, `size`, `availability`, `BHK`, `available_from`) VALUES
-('12345-1A', 12345, 20000, 1200, 0, 2, NULL),
-('12345-2A', 12345, 50000, 3000, 0, 4, NULL),
-('12346-1A', 12346, 23000, 2200, 1, 3, NULL),
-('12346-1B', 12346, 22000, 2000, 0, 2, NULL),
-('12346-1C', 12346, 24000, 2300, 0, 3, '2023-03-01'),
-('12346-1D', 12346, 23000, 2200, 0, 3, '2023-04-01'),
-('12346-2A', 12346, 20000, 2100, 0, 2, NULL),
-('12353-1A', 12353, 50000, 4000, 1, 6, NULL);
+INSERT INTO `apartment` (`ApartmentID`, `holdingNumber`, `rentpermonth`, `size`, `availability`, `BHK`, `video`, `floor`) VALUES
+('123456-1A', 123456, 35000, 2400, 0, 4, 'apartments/123456-1A.mp4', 1),
+('123456-1B', 123456, 50000, 3200, 0, 5, 'apartments/123456-1B.mp4', 1),
+('123456-2A', 123456, 48000, 3000, 1, 4, 'apartments/123456-2A.mp4', 2),
+('123456-2B', 123456, 48000, 3000, 1, 4, 'apartments/123456-2B.mp4', 2),
+('123457-1A', 123457, 60000, 3500, 0, 5, 'apartments/123457-1A.mp4', 1),
+('123457-1B', 123457, 70000, 4000, 1, 6, 'apartments/123457-1B.mp4', 1),
+('123457-1C', 123457, 60000, 3500, 1, 4, 'apartments/123457-1C.mp4', 1),
+('123457-1D', 123457, 60000, 3500, 1, 4, 'apartments/123457-1D.mp4', 1),
+('123458-3A', 123458, 15000, 800, 0, 3, 'apartments/123458-3A.mp4', 3),
+('123458-3B', 123458, 23500, 1000, 1, 3, 'apartments/123458-3B.mp4', 3),
+('123458-4C', 123458, 22500, 1000, 1, 3, 'apartments/123458-4C.mp4', 4),
+('123458-5A', 123458, 26000, 1200, 1, 3, 'apartments/123458-5A.mp4', 5);
 
 -- --------------------------------------------------------
 
@@ -68,12 +102,24 @@ CREATE TABLE `building` (
 --
 
 INSERT INTO `building` (`holdingNumber`, `buildingName`, `image`) VALUES
-(12345, 'Professor Villa', 'building\\12345.jpg'),
-(12346, 'Nilima House', 'building\\12346.jpg'),
-(12350, 'Manchester City Palace', 'building\\12350.jpg'),
-(12352, 'Aston Villa', 'building/12352.jpg'),
-(12353, 'Messi Palace', 'building/12353.jpg'),
-(12362, 'Barcelona Housing Society', 'building/12362.jpeg');
+(123456, 'Minhaz House', 'building/123456.jpg'),
+(123457, 'Ali Hossain Masters House', 'building/123457.png'),
+(123458, 'Shible Palace', 'building/123458.png');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `expense`
+--
+
+CREATE TABLE `expense` (
+  `id` bigint(20) NOT NULL,
+  `holdingNumber` bigint(20) NOT NULL,
+  `date` date NOT NULL,
+  `paid_by` varchar(100) NOT NULL,
+  `amount` double NOT NULL,
+  `description` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -87,18 +133,19 @@ CREATE TABLE `location` (
   `city` varchar(100) NOT NULL,
   `area` varchar(100) NOT NULL,
   `thana` varchar(100) NOT NULL,
-  `houseNo` int(100) NOT NULL
+  `houseNo` int(100) NOT NULL,
+  `block` varchar(100) NOT NULL,
+  `google_map_location` varchar(300) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `location`
 --
 
-INSERT INTO `location` (`holdingNumber`, `street`, `city`, `area`, `thana`, `houseNo`) VALUES
-(12345, 'Road No.2', 'Chattogram', 'Sughandha', 'Panchlaish', 25),
-(12346, 'Road No. 5', 'Chattogram', 'Cosmopoliton', 'Panchlaish', 33),
-(12353, 'Road No 19', 'Chattogram', 'Sughandha', 'Panchlaish', 5),
-(12362, 'Road No 3', 'Chittagong', 'Sughondha', 'Panchlaish', 10);
+INSERT INTO `location` (`holdingNumber`, `street`, `city`, `area`, `thana`, `houseNo`, `block`, `google_map_location`) VALUES
+(123456, '12', 'Chattogram', 'South Kulshi', 'Kulshi', 2, 'B', 'https://goo.gl/maps/HvSppqecUkbKrwAm6'),
+(123457, '13', 'Chattogram', 'Kala Mia Bazar', 'Bakolia', 6, 'D', 'https://goo.gl/maps/k5WMckXvJapYz9Fa7'),
+(123458, '17', 'Chattogram', 'Kala Mia Bazar', 'Bakolia', 7, 'E', 'https://goo.gl/maps/ncaNGtCrp4eSvzca7');
 
 -- --------------------------------------------------------
 
@@ -116,12 +163,10 @@ CREATE TABLE `own` (
 --
 
 INSERT INTO `own` (`email`, `holdingNumber`) VALUES
-('alvarez19@gmail.com', 12353),
-('haaland9@gmail.com', 12350),
-('km7@gmail.com', 12346),
-('martinez23@gmail.com', 12352),
-('messi10@gmail.com', 12345),
-('messi10@gmail.com', 12362);
+('easin33384@gmail.com', 123456),
+('shible0805@gmail.com', 123456),
+('shible0805@gmail.com', 123458),
+('tajbir26@gmail.com', 123457);
 
 -- --------------------------------------------------------
 
@@ -142,12 +187,28 @@ CREATE TABLE `owner` (
 --
 
 INSERT INTO `owner` (`first_name`, `last_name`, `phone`, `email`, `image`) VALUES
-('Julian', 'Alvarez', '0238741', 'alvarez19@gmail.com', 'owner/alvarez19@gmail.com.jpg'),
-('Erling', 'Haaland', '2187348', 'haaland9@gmail.com', 'owner\\haaland9@gmail.com.jpg'),
-('Kylian', 'Mbappe', '2342374', 'km7@gmail.com', 'owner\\km7@gmail.com.jpg'),
-('Emi', 'Martinez', '2341234', 'martinez23@gmail.com', 'owner/martinez23@gmail.com.jpg'),
-('Lionel', 'Messi', '+8801813548764', 'messi10@gmail.com', 'owner\\messi10@gmail.com.jpg'),
-('Neymar', 'Jr', '+8801813548782', 'neymar10@gmail.com', 'owner\\neymar10@gmail.com.jpg');
+('Emam', 'Hossain', '+8801628615864', 'easin33384@gmail.com', 'owner/easin33384@gmail.com.jpg'),
+('Salauddin', 'Shible', '01738668434', 'shible0805@gmail.com', 'owner/shible0805@gmail.com.jpg'),
+('Tajbir', 'Ahmed', '01811623615', 'tajbir26@gmail.com', 'owner/tajbir26@gmail.com.jpg');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `ownership_request`
+--
+
+CREATE TABLE `ownership_request` (
+  `holdingNumber` bigint(20) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `status` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `ownership_request`
+--
+
+INSERT INTO `ownership_request` (`holdingNumber`, `email`, `status`) VALUES
+(123456, 'shible0805@gmail.com', 1);
 
 -- --------------------------------------------------------
 
@@ -163,22 +224,44 @@ CREATE TABLE `payment_history` (
   `verify` varchar(100) DEFAULT NULL,
   `type` varchar(100) NOT NULL,
   `tnx_id` varchar(100) NOT NULL,
-  `verified_by` varchar(100) DEFAULT NULL
+  `verified_by` varchar(100) DEFAULT NULL,
+  `verified_at` date DEFAULT NULL,
+  `amount` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `payment_history`
 --
 
-INSERT INTO `payment_history` (`ApartmentID`, `name`, `rent_of`, `paid_date`, `verify`, `type`, `tnx_id`, `verified_by`) VALUES
-('12345-1A', 'Alison Becker', '2023-01', '2023-01-07', 'rejected', 'bkash', 'jan_pay', 'not verified'),
-('12345-1A', 'Alison Becker', '2023-02', '2023-02-07', 'verified', 'nagad', 'feb_pay', 'messi10@gmail.com'),
-('12345-1A', '', '2023-03', NULL, '', '', '', ''),
-('12345-1A', '', '2023-04', NULL, '', '', '', ''),
-('12345-2A', '', '2023-01', NULL, NULL, '', '', NULL),
-('12345-2A', 'Stefan Bajectic', '2023-02', '2023-02-07', 'rejected', 'bkash', 'asfg', 'not verified'),
-('12345-2A', '', '2023-03', NULL, NULL, '', '', NULL),
-('12345-2A', '', '2023-04', NULL, NULL, '', '', NULL);
+INSERT INTO `payment_history` (`ApartmentID`, `name`, `rent_of`, `paid_date`, `verify`, `type`, `tnx_id`, `verified_by`, `verified_at`, `amount`) VALUES
+('123456-1A', '', '2023-03', NULL, NULL, '', '', NULL, NULL, 0),
+('123456-1B', '', '2023-03', NULL, NULL, '', '', NULL, NULL, 0),
+('123456-2A', '', '2023-03', NULL, NULL, '', '', NULL, NULL, 0),
+('123456-2B', '', '2023-03', NULL, NULL, '', '', NULL, NULL, 0),
+('123457-1A', '', '2023-03', NULL, NULL, '', '', NULL, NULL, 0),
+('123457-1B', '', '2023-03', NULL, NULL, '', '', NULL, NULL, 0),
+('123457-1C', '', '2023-03', NULL, NULL, '', '', NULL, NULL, 0),
+('123457-1D', '', '2023-03', NULL, NULL, '', '', NULL, NULL, 0),
+('123458-3A', '', '2023-03', NULL, NULL, '', '', NULL, NULL, 0),
+('123458-3B', '', '2023-03', NULL, NULL, '', '', NULL, NULL, 0),
+('123458-4C', '', '2023-03', NULL, NULL, '', '', NULL, NULL, 0),
+('123458-5A', '', '2023-03', NULL, NULL, '', '', NULL, NULL, 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `staff`
+--
+
+CREATE TABLE `staff` (
+  `holdingNumber` bigint(20) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `phone` varchar(100) NOT NULL,
+  `staffid` int(11) NOT NULL,
+  `image` varchar(100) NOT NULL,
+  `joining_date` date NOT NULL DEFAULT current_timestamp(),
+  `salary` double NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -205,12 +288,10 @@ CREATE TABLE `tenant` (
 --
 
 INSERT INTO `tenant` (`ApartmentID`, `first_name`, `last_name`, `phone`, `email`, `image`, `nid`, `fdesc`, `registerddate`, `nid_image`, `advanced_amount`) VALUES
-('12345-1A', 'Alison', 'Becker', '12837401', 'beckar5@gmail.com', 'tenant/12345-1A.jpg', '2374162384', 'Married', '2023-01-01', 'nid/12345-1A.png', 20000),
-('12345-2A', 'Stefan', 'Bajectic', '1823471203', 'bajectic_loss_ball@gmail.com', 'tenant/12345-2A.jpg', '17263413278', 'total 7 members', '2023-02-01', 'nid/12345-2A.png', 50000),
-('12346-1B', 'Robiul', 'Apu', '54623456', 'apu69@gmail.com', 'tenant/12346-1B.jpg', '23471283748291', '1 boyfreind', '2023-02-01', 'nid/12346-1B.png', 200),
-('12346-1C', 'Shajidul', 'Islam', '3245342525', 'shajidul69@gmail.com', 'tenant\\12346-1C.jpg', '23471283748291', 'Four girlfriend and no wife', '2023-02-18', 'nid\\12346-1C.png', 0),
-('12346-1D', 'Emam', 'Easin', '0181384298', 'Easin78@gmail.com', '', '5626234510', '', '2022-08-15', '', 0),
-('12346-2A', 'Sanim', 'Sourav', '32487520347', 'sourav69@gmail.com', '', '832475234', 'trying to find a girl', '2023-02-18', '', 0);
+('123456-1A', 'Shahriad', 'Hossain', '+01880962305', 'hossainshahriad@gmail.com', 'tenant/123456-1A.jpg', '1234', 'Toatal 6 members including 2 children', '2022-12-01', 'nid/123456-1A.png', 35000),
+('123456-1B', 'Salauddin', 'Shible', '01738668434', 'shible0805@gmail.com', 'tenant/123456-1B.jpg', '1234', 'Total 7 members.', '2022-12-01', 'nid/123456-1B.png', 50000),
+('123457-1A', 'Imtiaj', 'Aoual', '+8801811623615', 'easin33384@gmail.com', 'tenant/123457-1A.jpg', '1234', 'Total 15 members', '2022-12-01', 'nid/123457-1A.png', 50000),
+('123458-3A', 'Tajbir', 'Ahmed', '+8801811623615', 'tajbir26@gmail.com', 'tenant/123458-3A.jpg', '1234', 'total 3 members.', '2022-12-01', 'nid/123458-3A.png', 40000);
 
 -- --------------------------------------------------------
 
@@ -229,19 +310,13 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`username`, `password`, `type`) VALUES
-('12345-1A@ras.com', '2374162384', 'tenant'),
-('12345-2A@ras.com', '17263413278', 'tenant'),
-('12346-1B@ras.com', '23471283748291', 'tenant'),
-('12346-1C@ras.com', '23471283748291', 'tenant'),
-('12346-2A@ras.com', '832475234', 'tenant'),
-('12349-1C@ras.com', '1234', 'tenant'),
-('12349-2A@ras.com', '53452345234', 'tenant'),
-('alvarez19@gmail.com', '1234', 'owner'),
-('haaland9@gmail.com', '1234', 'owner'),
-('km7@gmail.com', 'psgfan', 'owner'),
-('martinez23@gmail.com', '1234', 'owner'),
-('messi10@gmail.com', '123321', 'owner'),
-('neymar10@gmail.com', '2026', 'owner'),
+('123456-1A@ras.com', '1234', 'tenant'),
+('123456-1B@ras.com', '1234', 'tenant'),
+('123457-1A@ras.com', '1234', 'tenant'),
+('123458-3A@ras.com', '1234', 'tenant'),
+('easin33384@gmail.com', '1234', 'owner'),
+('shible0805@gmail.com', '1234', 'owner'),
+('tajbir26@gmail.com', '1234', 'owner'),
 ('tajbir@gmail.com', '123456', 'admin');
 
 --
@@ -261,6 +336,13 @@ ALTER TABLE `apartment`
 --
 ALTER TABLE `building`
   ADD PRIMARY KEY (`holdingNumber`),
+  ADD KEY `holdingNumber` (`holdingNumber`);
+
+--
+-- Indexes for table `expense`
+--
+ALTER TABLE `expense`
+  ADD PRIMARY KEY (`id`),
   ADD KEY `holdingNumber` (`holdingNumber`);
 
 --
@@ -286,11 +368,24 @@ ALTER TABLE `owner`
   ADD KEY `email` (`email`);
 
 --
+-- Indexes for table `ownership_request`
+--
+ALTER TABLE `ownership_request`
+  ADD PRIMARY KEY (`holdingNumber`,`email`);
+
+--
 -- Indexes for table `payment_history`
 --
 ALTER TABLE `payment_history`
   ADD PRIMARY KEY (`ApartmentID`,`rent_of`),
   ADD KEY `ApartmentID` (`ApartmentID`);
+
+--
+-- Indexes for table `staff`
+--
+ALTER TABLE `staff`
+  ADD PRIMARY KEY (`staffid`),
+  ADD KEY `holdingNumber` (`holdingNumber`);
 
 --
 -- Indexes for table `tenant`
@@ -315,7 +410,19 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `building`
 --
 ALTER TABLE `building`
-  MODIFY `holdingNumber` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12363;
+  MODIFY `holdingNumber` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=123459;
+
+--
+-- AUTO_INCREMENT for table `expense`
+--
+ALTER TABLE `expense`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `staff`
+--
+ALTER TABLE `staff`
+  MODIFY `staffid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Constraints for dumped tables
@@ -326,6 +433,12 @@ ALTER TABLE `building`
 --
 ALTER TABLE `apartment`
   ADD CONSTRAINT `apartment_ibfk_1` FOREIGN KEY (`holdingNumber`) REFERENCES `building` (`holdingNumber`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `expense`
+--
+ALTER TABLE `expense`
+  ADD CONSTRAINT `expense_ibfk_1` FOREIGN KEY (`holdingNumber`) REFERENCES `building` (`holdingNumber`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `location`
@@ -347,10 +460,22 @@ ALTER TABLE `owner`
   ADD CONSTRAINT `owner_ibfk_1` FOREIGN KEY (`email`) REFERENCES `user` (`username`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
+-- Constraints for table `ownership_request`
+--
+ALTER TABLE `ownership_request`
+  ADD CONSTRAINT `ownership_request_ibfk_1` FOREIGN KEY (`holdingNumber`) REFERENCES `building` (`holdingNumber`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Constraints for table `payment_history`
 --
 ALTER TABLE `payment_history`
   ADD CONSTRAINT `payment_history_ibfk_1` FOREIGN KEY (`ApartmentID`) REFERENCES `apartment` (`ApartmentID`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `staff`
+--
+ALTER TABLE `staff`
+  ADD CONSTRAINT `staff_ibfk_1` FOREIGN KEY (`holdingNumber`) REFERENCES `building` (`holdingNumber`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `tenant`
