@@ -19,6 +19,25 @@
     <body>
         <?php 
             require 'home/_nav.php';
+            // Workaround
+            $month = date('Y-m');
+            $sql = "SELECT rent_of from `payment_history` where rent_of = '$month' limit 1";
+            $result = mysqli_query($con, $sql); 
+            if (mysqli_num_rows($result)) {
+                // do nothing
+            } else {
+                $sql = "SELECT ApartmentID from `apartment`";
+                $result = mysqli_query($con, $sql); 
+                if ($result) {
+                    while ($row = mysqli_fetch_assoc($result)) {
+                        $aid = $row['ApartmentID'];
+                        $sql_1 = "INSERT INTO `payment_history` (`rent_of`, `ApartmentID`) 
+                                                            values('$month', '$aid')";
+                        mysqli_query($con, $sql_1);
+                    } 
+                }
+            }
+            
         ?>
         <div class="container my-5">
             <table class="table">
