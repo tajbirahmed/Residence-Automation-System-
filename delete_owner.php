@@ -112,7 +112,7 @@ $alert = false;
         <form method="post">
 
             <div class="form-group">
-                <img src="images/<?php echo $image; ?>">
+                <img src="images/<?php echo $image; ?>" style="height: 100px; width:100px;">
             </div>
 
             <div class="form-group">
